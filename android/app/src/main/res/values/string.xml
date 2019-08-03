@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title">MyopiAI</string>
+    <string name="stop">Stop</string>
+    <string name="end">End</string>
+    <string name="activity">activity</string>
+    <string name="channel_media">Media channel</string>
+    <string name="channel_critical">Critical notification</string>
+    <string name="channel_importance">Important notification</string>
+    <string name="channel_default">Default notification</string>
+    <string name="channel_low">Low notification</string>
+    <string name="light_warning">Warning! Find more light! Don\'t strain your eyes.</string>
+    <string name="break_warning">Take a brake for 20/20/20.</string>
+</resources>

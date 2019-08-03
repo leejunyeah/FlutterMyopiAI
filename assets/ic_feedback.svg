@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.2 (67145) - http://www.bohemiancoding.com/sketch -->
+    <title>ic_Feedback</title>
+    <desc>Created with Sketch.</desc>
+    <g id="ic_Feedback" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="round-chat-24px">
+            <polygon id="Path" points="0 0 24 0 24 24 0 24"></polygon>
+            <path d="M20,2 L4,2 C2.9,2 2.01,2.9 2.01,4 L2.00134228,19.5838888 C2.00103546,20.1361734 2.44850191,20.5841373 3.00078657,20.5844442 C3.26619554,20.5845916 3.5207764,20.4792236 3.70844891,20.2915511 L6,18 L20,18 C21.1,18 22,17.1 22,16 L22,4 C22,2.9 21.1,2 20,2 Z M7,7 L17,7 C17.55,7 18,7.45 18,8 C18,8.55 17.55,9 17,9 L7,9 C6.45,9 6,8.55 6,8 C6,7.45 6.45,7 7,7 Z M13,13 L7,13 C6.45,13 6,12.55 6,12 C6,11.45 6.45,11 7,11 L13,11 C13.55,11 14,11.45 14,12 C14,12.55 13.55,13 13,13 Z" id="Shape" fill="#21C8D4" fill-rule="nonzero"></path>
+        </g>
+    </g>
+</svg>

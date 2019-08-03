@@ -1,0 +1,15 @@
+{
+  "welcome_title": "歡迎使用MyopiAI",
+  "welcome_content": "請完成以下步驟輸入您的眼睛（眼鏡）或隱形眼鏡處方。之後我們會給你一些個性化的眼保健建議。",
+  "welcome_go": "開始",
+  "welcome_later": "稍後設置",
+  "home_title": "主頁",
+  "activity_title": "活動",
+  "settings_title": "設置",
+  "eye_activity_time": "眼睛活動時間",
+  "start_new_activity": "開始一個新的活動",
+  "eye_exercise": "眼保健操",
+  "time_h": "小時",
+  "time_min": "分鐘",
+  "time_mins": "分鐘"
+}
