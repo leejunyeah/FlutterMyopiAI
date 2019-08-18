@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="42px" height="42px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 52.2 (67145) - http://www.bohemiancoding.com/sketch -->
-    <title>ic_Watching TV</title>
+<svg width="22px" height="18px" viewBox="0 0 22 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 56.3 (81716) - https://sketch.com -->
+    <title>ic_watching_tv</title>
     <desc>Created with Sketch.</desc>
-    <g id="ic_Watching-TV" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="Group-12">
-            <circle id="Oval" fill="#4F7CEC" fill-rule="nonzero" cx="21" cy="21" r="21"></circle>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="ic_watching_tv" transform="translate(-10.000000, -13.000000)">
+            <circle id="Oval" fill-rule="nonzero" cx="21" cy="21" r="21"></circle>
             <g id="round-chrome_reader_mode-24px" transform="translate(9.000000, 9.000000)">
                 <polygon id="Path" points="0 0 24 0 24 24 0 24"></polygon>
-                <g id="round-tv-24px" transform="translate(1.000000, 4.000000)" fill="#FFFFFF">
-                    <path d="M20,0 L2,0 C0.9,0 0,0.9 0,2 L0,14 C0,15.1 0.9,16 2,16 L7,16 L7,17 C7,17.55 7.45,18 8,18 L14,18 C14.55,18 15,17.55 15,17 L15,16 L20,16 C21.1,16 21.99,15.1 21.99,14 L22,2 C22,0.9 21.1,0 20,0 Z M19,14 L3,14 C2.45,14 2,13.55 2,13 L2,3 C2,2.45 2.45,2 3,2 L19,2 C19.55,2 20,2.45 20,3 L20,13 C20,13.55 19.55,14 19,14 Z" id="Shape" fill-rule="nonzero"></path>
+                <g id="round-tv-24px" transform="translate(1.000000, 4.000000)" fill="#FFFFFF" fill-rule="nonzero">
+                    <path d="M20,0 L2,0 C0.9,0 0,0.9 0,2 L0,14 C0,15.1 0.9,16 2,16 L7,16 L7,17 C7,17.55 7.45,18 8,18 L14,18 C14.55,18 15,17.55 15,17 L15,16 L20,16 C21.1,16 21.99,15.1 21.99,14 L22,2 C22,0.9 21.1,0 20,0 Z M19,14 L3,14 C2.45,14 2,13.55 2,13 L2,3 C2,2.45 2.45,2 3,2 L19,2 C19.55,2 20,2.45 20,3 L20,13 C20,13.55 19.55,14 19,14 Z" id="Shape"></path>
                     <path d="M10.1687842,11.2104273 L14.1487842,8.9304273 C14.8187842,8.5504273 14.8187842,7.5804273 14.1487842,7.1904273 L10.1687842,4.9104273 C9.4987842,4.5304273 8.6687842,5.0204273 8.6687842,5.7804273 L8.6687842,10.3304273 C8.6687842,11.1004273 9.4987842,11.5904273 10.1687842,11.2104273 Z" id="Path"></path>
                 </g>
             </g>

@@ -15,7 +15,6 @@ class DialogContent extends StatefulWidget {
 }
 
 class DialogContentState extends State<DialogContent> {
-  Function _onClosed;
   Timer _20Timer;
   int _counterS;
   bool _isRunning;
@@ -24,7 +23,6 @@ class DialogContentState extends State<DialogContent> {
   void initState() {
     _counterS = 20;
     _isRunning = false;
-    _onClosed = widget.onClosed;
     super.initState();
   }
 
@@ -77,7 +75,7 @@ class DialogContentState extends State<DialogContent> {
                     ),
                   ),
                   SizedBox(
-                    height: 13,
+                    height: 5,
                   ),
                   Text(
                     '20/20/20',
@@ -88,7 +86,7 @@ class DialogContentState extends State<DialogContent> {
                     ),
                   ),
                   SizedBox(
-                    height: 12,
+                    height: 5,
                   ),
                   Container(
                     padding: EdgeInsets.only(left: 8, right: 8),
@@ -220,7 +218,7 @@ class DialogContentState extends State<DialogContent> {
     if (_20Timer != null) {
       _20Timer.cancel();
     }
-    _onClosed();
+    widget.onClosed();
     Navigator.of(context).pop();
   }
 

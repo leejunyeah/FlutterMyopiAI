@@ -194,7 +194,7 @@ class _TimePickerSpinnerState extends State<TimePickerSpinner> {
         initialScrollOffset: (currentSelectedHourIndex - 1) * _getItemHeight());
 
     currentSelectedMinuteIndex =
-        (20/*currentTime.minute*/ / widget.minutesInterval).floor() +
+        (30/*currentTime.minute*/ / widget.minutesInterval).floor() +
             _getMinuteCount();
     minuteController = new ScrollController(
         initialScrollOffset:
@@ -418,6 +418,7 @@ class _TimePickerSpinnerState extends State<TimePickerSpinner> {
                 (controller.offset / _getItemHeight()).round() + 1);
           });
         }
+        return true;
       },
       child: new ListView.builder(
         itemBuilder: (context, index) {
@@ -478,6 +479,7 @@ class _TimePickerSpinnerState extends State<TimePickerSpinner> {
             isAPScrolling = true;
           });
         }
+        return true;
       },
       child: new ListView.builder(
         itemBuilder: (context, index) {

@@ -7,18 +7,21 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter_myopia_ai/data/database_helper.dart';
 import 'package:flutter_myopia_ai/util/date_format.dart';
 
+import '../generated/i18n.dart' as i18n;
+
 class ActivityChartWidget extends StatefulWidget {
   final int itemType;
-  ActivityChartWidget({Key key, this.itemType}) : super(key: key);
+  final int customType;
+  final String customText;
+  ActivityChartWidget(
+      {Key key, this.itemType, this.customType = 0, this.customText = ''})
+      : super(key: key);
 
   @override
-  _ActivityChartWidgetState createState() =>
-      new _ActivityChartWidgetState(itemType: this.itemType);
+  _ActivityChartWidgetState createState() => new _ActivityChartWidgetState();
 }
 
 class _ActivityChartWidgetState extends State<ActivityChartWidget> {
-  final int itemType;
-
   bool _isDChecked = true;
   bool _isWChecked = false;
   bool _isMChecked = false;
@@ -36,7 +39,7 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
   String _averageHour, _averageMin;
   String _title;
 
-  _ActivityChartWidgetState({this.itemType});
+  _ActivityChartWidgetState();
 
   @override
   void initState() {
@@ -49,14 +52,13 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
     _selectDay = _getDayString(_pickDate);
     _seriesList = _createDailyEmptyData();
     _ticks = _createDailyTick();
-    _setTitle(itemType);
-    _createDailyDataState(_pickDate, itemType);
-
+    _createDailyDataState(_pickDate, widget.itemType, widget.customType);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    _setTitle();
     return new Scaffold(
       appBar: new AppBar(
         centerTitle: false,
@@ -122,7 +124,8 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
         Row(
           children: <Widget>[
             Text(
-              'Average',
+              //'Average',
+              i18n.S.of(context).activity_chart_total,
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -152,7 +155,7 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
           ),
         ),
         Text(
-          'h',
+          i18n.S.of(context).time_h,
           style: TextStyle(
             fontSize: 14,
             color: Color(0x7F191919),
@@ -167,7 +170,7 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
           ),
         ),
         Text(
-          'min',
+          i18n.S.of(context).time_min,
           style: TextStyle(
             fontSize: 14,
             color: Color(0x7F191919),
@@ -353,7 +356,7 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
 
       _ticks = _createDailyTick();
       _selectDay = _getDayString(_pickDate);
-      _createDailyDataState(_pickDate, itemType);
+      _createDailyDataState(_pickDate, widget.itemType, widget.customType);
     }
   }
 
@@ -366,7 +369,7 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
 
       _ticks = _createWeekTick();
       _selectDay = _getDayString(_pickDate);
-      _createWeekDataState(_pickDate, itemType);
+      _createWeekDataState(_pickDate, widget.itemType, widget.customType);
     }
   }
 
@@ -379,7 +382,7 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
 
       _ticks = _createMonthTick(_pickDate);
       _selectDay = _getDayString(_pickDate);
-      _createMonthDataState(_pickDate, itemType);
+      _createMonthDataState(_pickDate, widget.itemType, widget.customType);
     }
   }
 
@@ -392,7 +395,7 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
 
       _ticks = _createYearTick();
       _selectDay = _getDayString(_pickDate);
-      _createYearDataState(_pickDate, itemType);
+      _createYearDataState(_pickDate, widget.itemType, widget.customType);
     }
   }
 
@@ -415,13 +418,13 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
       _pickDate = _picked;
       _selectDay = _getDayString(_pickDate);
       if (_isDChecked) {
-        _createDailyDataState(_pickDate, itemType);
+        _createDailyDataState(_pickDate, widget.itemType, widget.customType);
       } else if (_isWChecked) {
-        _createWeekDataState(_pickDate, itemType);
+        _createWeekDataState(_pickDate, widget.itemType, widget.customType);
       } else if (_isMChecked) {
-        _createMonthDataState(_pickDate, itemType);
+        _createMonthDataState(_pickDate, widget.itemType, widget.customType);
       } else if (_isYChecked) {
-        _createYearDataState(_pickDate, itemType);
+        _createYearDataState(_pickDate, widget.itemType, widget.customType);
       }
     }
   }
@@ -447,8 +450,8 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
     ];
   }
 
-  _createDailyDataState(DateTime dateTime, int type) async {
-    List<ActivityData> data = await _loadDailyData(dateTime, type);
+  _createDailyDataState(DateTime dateTime, int type, int customType) async {
+    List<ActivityData> data = await _loadDailyData(dateTime, type, customType);
     List<charts.Series<ActivityData, String>> list = [
       new charts.Series<ActivityData, String>(
         id: 'Activity',
@@ -466,10 +469,11 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
     setState(() {});
   }
 
-  Future<List<ActivityData>> _loadDailyData(DateTime dateTime, int type) async {
+  Future<List<ActivityData>> _loadDailyData(
+      DateTime dateTime, int type, int customType) async {
     List<ActivityItem> dailyList = await (type == ActivityItem.TYPE_NONE
         ? _getDailyListByDay(dateTime)
-        : _getDailyListByDayAndType(dateTime, type));
+        : _getDailyListByDayAndType(dateTime, type, customType));
     List<ActivityData> data = [];
     for (int i = 0; i < 24; i++) {
       if (i < 10) {
@@ -478,13 +482,40 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
         data.add(new ActivityData(i.toString(), 0, i));
       }
     }
-
+    if (type & ActivityItem.TYPE_OTHER_TOTAL != 0) {
+      List<ActivityItem> sortList = [];
+      for (ActivityItem item in dailyList) {
+        ActivityItem tempItem;
+        for (ActivityItem sortItem in sortList) {
+          if (sortItem.type & ActivityItem.TYPE_CUSTOM != 0) {
+            if (sortItem.type == item.type &&
+                sortItem.customType == item.customType) {
+              tempItem = sortItem;
+              break;
+            }
+          } else if (sortItem.type == item.type) {
+            tempItem = sortItem;
+            break;
+          }
+        }
+        if (tempItem == null) {
+          tempItem = item;
+          sortList.add(tempItem);
+        } else {
+          tempItem.actual += item.actual;
+        }
+      }
+      sortList.sort((left, right) => right.actual.compareTo(left.actual));
+      if (sortList.isNotEmpty && sortList.length > MAX_DETAIL_COUNT) {
+        dailyList = sortList.sublist(MAX_DETAIL_COUNT);
+      }
+    }
     for (ActivityItem item in dailyList) {
       int timeInt = item.time;
       DateTime time = DateTime.fromMillisecondsSinceEpoch(timeInt);
       int actualSeconds = item.actual;
       int actualMins = actualSeconds ~/ 60;
-      double tempTime = double.parse((data[time.hour].time).toStringAsFixed(0));
+      double tempTime = data[time.hour].time;//double.parse((data[time.hour].time).toStringAsFixed(0));
       tempTime += actualMins;
       data[time.hour].time = tempTime > 60 ? 60 : tempTime;
       double overTime = tempTime - 60;
@@ -510,6 +541,7 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
     List<ActivityItem> dailyList = new List();
     for (ActivityItem item in activities) {
       int timeInt = item.time;
+      if (item.actual < 60) continue;
       DateTime time = DateTime.fromMillisecondsSinceEpoch(timeInt);
       if (dateTime.year == time.year &&
           dateTime.month == time.month &&
@@ -521,26 +553,46 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
   }
 
   Future<List<ActivityItem>> _getDailyListByDayAndType(
-      DateTime dateTime, int type) async {
+      DateTime dateTime, int type, int customType) async {
     List<ActivityItem> activities =
         await DatabaseHelper.internal().selectActivities();
     List<ActivityItem> dailyList = new List();
+    bool isIndoor = type & ActivityItem.TYPE_INDOOR != 0;
     for (ActivityItem item in activities) {
       int timeInt = item.time;
       int itemType = item.type;
+      int itemCustom = item.customType;
+      if (item.actual < 60) continue;
       DateTime time = DateTime.fromMillisecondsSinceEpoch(timeInt);
       if (dateTime.year == time.year &&
           dateTime.month == time.month &&
-          dateTime.day == time.day &&
-          type == itemType) {
-        dailyList.add(item);
+          dateTime.day == time.day) {
+        if (itemType == type) {
+          if (customType != 0) {
+            if (itemCustom == customType) {
+              dailyList.add(item);
+            }
+          } else {
+            dailyList.add(item);
+          }
+        } else if (type & ActivityItem.TYPE_OTHER_TOTAL != 0) {
+          if (isIndoor) {
+            if (itemType & ActivityItem.TYPE_INDOOR != 0) {
+              dailyList.add(item);
+            }
+          } else {
+            if (itemType & ActivityItem.TYPE_OUTDOOR != 0) {
+              dailyList.add(item);
+            }
+          }
+        }
       }
     }
     return dailyList;
   }
 
-  _createWeekDataState(DateTime dateTime, int type) async {
-    List<ActivityData> data = await _loadWeekData(dateTime, type);
+  _createWeekDataState(DateTime dateTime, int type, int customType) async {
+    List<ActivityData> data = await _loadWeekData(dateTime, type, customType);
     List<charts.Series<ActivityData, String>> list = [
       new charts.Series<ActivityData, String>(
         id: 'Activity',
@@ -557,10 +609,11 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
     setState(() {});
   }
 
-  Future<List<ActivityData>> _loadWeekData(DateTime dateTime, int type) async {
+  Future<List<ActivityData>> _loadWeekData(
+      DateTime dateTime, int type, int customType) async {
     List<ActivityItem> dailyList = await (type == ActivityItem.TYPE_NONE
         ? _getDailyListByWeek(dateTime)
-        : _getDailyListByWeekAndType(dateTime, type));
+        : _getDailyListByWeekAndType(dateTime, type, customType));
     List<ActivityData> data = [
       new ActivityData('Sun', 0, 0),
       new ActivityData('Mon', 0, 1),
@@ -571,12 +624,41 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
       new ActivityData('Sat', 0, 6),
     ];
 
+    if (type & ActivityItem.TYPE_OTHER_TOTAL != 0) {
+      List<ActivityItem> sortList = [];
+      for (ActivityItem item in dailyList) {
+        ActivityItem tempItem;
+        for (ActivityItem sortItem in sortList) {
+          if (sortItem.type & ActivityItem.TYPE_CUSTOM != 0) {
+            if (sortItem.type == item.type &&
+                sortItem.customType == item.customType) {
+              tempItem = sortItem;
+              break;
+            }
+          } else if (sortItem.type == item.type) {
+            tempItem = sortItem;
+            break;
+          }
+        }
+        if (tempItem == null) {
+          tempItem = item;
+          sortList.add(tempItem);
+        } else {
+          tempItem.actual += item.actual;
+        }
+      }
+      sortList.sort((left, right) => right.actual.compareTo(left.actual));
+      if (sortList.isNotEmpty && sortList.length > MAX_DETAIL_COUNT) {
+        dailyList = sortList.sublist(MAX_DETAIL_COUNT);
+      }
+    }
+
     for (ActivityItem item in dailyList) {
       int timeInt = item.time;
       DateTime time = DateTime.fromMillisecondsSinceEpoch(timeInt);
       int actualSeconds = item.actual;
-      double actualHours =
-          double.parse((actualSeconds / (60 * 60)).toStringAsFixed(2));
+      double actualHours = actualSeconds / (60 * 60);
+//          double.parse((actualSeconds / (60 * 60)).toStringAsFixed(4));
       int index = time.weekday % 7;
       double tempTime = data[index].time;
       tempTime += actualHours;
@@ -613,6 +695,7 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
     int startDateInt = startDate.millisecondsSinceEpoch;
     int endDateInt = endDate.millisecondsSinceEpoch;
     for (ActivityItem item in activities) {
+      if (item.actual < 60) continue;
       if (startDateInt <= item.time && endDateInt >= item.time) {
         dailyList.add(item);
       }
@@ -621,7 +704,7 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
   }
 
   Future<List<ActivityItem>> _getDailyListByWeekAndType(
-      DateTime dateTime, int type) async {
+      DateTime dateTime, int type, int customType) async {
     List<ActivityItem> activities =
         await DatabaseHelper.internal().selectActivities();
     List<ActivityItem> dailyList = new List();
@@ -634,18 +717,36 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
         .add(Duration(days: rightDay, hours: 23, minutes: 59, seconds: 59));
     int startDateInt = startDate.millisecondsSinceEpoch;
     int endDateInt = endDate.millisecondsSinceEpoch;
+    bool isIndoor = type & ActivityItem.TYPE_INDOOR != 0;
     for (ActivityItem item in activities) {
-      if (startDateInt <= item.time &&
-          endDateInt >= item.time &&
-          type == item.type) {
-        dailyList.add(item);
+      if (item.actual < 60) continue;
+      if (startDateInt <= item.time && endDateInt >= item.time) {
+        if (item.type == type) {
+          if (customType != 0) {
+            if (item.customType == customType) {
+              dailyList.add(item);
+            }
+          } else {
+            dailyList.add(item);
+          }
+        } else if (type & ActivityItem.TYPE_OTHER_TOTAL != 0) {
+          if (isIndoor) {
+            if (item.type & ActivityItem.TYPE_INDOOR != 0) {
+              dailyList.add(item);
+            }
+          } else {
+            if (item.type & ActivityItem.TYPE_OUTDOOR != 0) {
+              dailyList.add(item);
+            }
+          }
+        }
       }
     }
     return dailyList;
   }
 
-  _createMonthDataState(DateTime dateTime, int type) async {
-    List<ActivityData> data = await _loadMonthData(dateTime, type);
+  _createMonthDataState(DateTime dateTime, int type, int customType) async {
+    List<ActivityData> data = await _loadMonthData(dateTime, type, customType);
     List<charts.Series<ActivityData, String>> list = [
       new charts.Series<ActivityData, String>(
         id: 'Activity',
@@ -663,22 +764,52 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
     setState(() {});
   }
 
-  Future<List<ActivityData>> _loadMonthData(DateTime dateTime, int type) async {
+  Future<List<ActivityData>> _loadMonthData(
+      DateTime dateTime, int type, int customType) async {
     List<ActivityItem> dailyList = await (type == ActivityItem.TYPE_NONE
         ? _getDailyListByMonth(dateTime)
-        : _getDailyListByMonthAndType(dateTime, type));
+        : _getDailyListByMonthAndType(dateTime, type, customType));
     List<ActivityData> data = [];
     int dayCounts = getMonthDayCount(dateTime);
     for (int i = 1; i <= dayCounts; i++) {
       data.add(new ActivityData(i.toString(), 0, i));
     }
 
+    if (type & ActivityItem.TYPE_OTHER_TOTAL != 0) {
+      List<ActivityItem> sortList = [];
+      for (ActivityItem item in dailyList) {
+        ActivityItem tempItem;
+        for (ActivityItem sortItem in sortList) {
+          if (sortItem.type & ActivityItem.TYPE_CUSTOM != 0) {
+            if (sortItem.type == item.type &&
+                sortItem.customType == item.customType) {
+              tempItem = sortItem;
+              break;
+            }
+          } else if (sortItem.type == item.type) {
+            tempItem = sortItem;
+            break;
+          }
+        }
+        if (tempItem == null) {
+          tempItem = item;
+          sortList.add(tempItem);
+        } else {
+          tempItem.actual += item.actual;
+        }
+      }
+      sortList.sort((left, right) => right.actual.compareTo(left.actual));
+      if (sortList.isNotEmpty && sortList.length > MAX_DETAIL_COUNT) {
+        dailyList = sortList.sublist(MAX_DETAIL_COUNT);
+      }
+    }
+
     for (ActivityItem item in dailyList) {
       int timeInt = item.time;
       DateTime time = DateTime.fromMillisecondsSinceEpoch(timeInt);
       int actualSeconds = item.actual;
-      double actualHours =
-          double.parse((actualSeconds / (60 * 60)).toStringAsFixed(2));
+      double actualHours = actualSeconds / (60 * 60);
+//          double.parse((actualSeconds / (60 * 60)).toStringAsFixed(2));
       int index = time.day;
       double tempTime = data[index].time;
       tempTime += actualHours;
@@ -706,6 +837,7 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
         await DatabaseHelper.internal().selectActivities();
     List<ActivityItem> dailyList = new List();
     for (ActivityItem item in activities) {
+      if (item.actual < 60) continue;
       int timeInt = item.time;
       DateTime itemTime = DateTime.fromMillisecondsSinceEpoch(timeInt);
       if (itemTime.month == dateTime.month) {
@@ -716,22 +848,42 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
   }
 
   Future<List<ActivityItem>> _getDailyListByMonthAndType(
-      DateTime dateTime, int type) async {
+      DateTime dateTime, int type, int customType) async {
     List<ActivityItem> activities =
         await DatabaseHelper.internal().selectActivities();
     List<ActivityItem> dailyList = new List();
+    bool isIndoor = type & ActivityItem.TYPE_INDOOR != 0;
     for (ActivityItem item in activities) {
+      if (item.actual < 60) continue;
       int timeInt = item.time;
       DateTime itemTime = DateTime.fromMillisecondsSinceEpoch(timeInt);
-      if (itemTime.month == dateTime.month && item.type == type) {
-        dailyList.add(item);
+      if (itemTime.month == dateTime.month) {
+        if (item.type == type) {
+          if (customType != 0) {
+            if (item.customType == customType) {
+              dailyList.add(item);
+            }
+          } else {
+            dailyList.add(item);
+          }
+        } else if (type & ActivityItem.TYPE_OTHER_TOTAL != 0) {
+          if (isIndoor) {
+            if (item.type & ActivityItem.TYPE_INDOOR != 0) {
+              dailyList.add(item);
+            }
+          } else {
+            if (item.type & ActivityItem.TYPE_OUTDOOR != 0) {
+              dailyList.add(item);
+            }
+          }
+        }
       }
     }
     return dailyList;
   }
 
-  _createYearDataState(DateTime dateTime, int type) async {
-    List<ActivityData> data = await _loadYearData(dateTime, type);
+  _createYearDataState(DateTime dateTime, int type, int customType) async {
+    List<ActivityData> data = await _loadYearData(dateTime, type, customType);
     List<charts.Series<ActivityData, String>> list = [
       new charts.Series<ActivityData, String>(
         id: 'Activity',
@@ -749,10 +901,11 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
     setState(() {});
   }
 
-  Future<List<ActivityData>> _loadYearData(DateTime dateTime, int type) async {
+  Future<List<ActivityData>> _loadYearData(
+      DateTime dateTime, int type, int customType) async {
     List<ActivityItem> dailyList = await (type == ActivityItem.TYPE_NONE
         ? _getDailyListByYear(dateTime)
-        : _getDailyListByYearAndType(dateTime, type));
+        : _getDailyListByYearAndType(dateTime, type, customType));
     List<ActivityData> data = [];
     for (int i = 1; i <= 12; i++) {
       if (i == 3) {
@@ -768,13 +921,42 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
       }
     }
 
+    if (type & ActivityItem.TYPE_OTHER_TOTAL != 0) {
+      List<ActivityItem> sortList = [];
+      for (ActivityItem item in dailyList) {
+        ActivityItem tempItem;
+        for (ActivityItem sortItem in sortList) {
+          if (sortItem.type & ActivityItem.TYPE_CUSTOM != 0) {
+            if (sortItem.type == item.type &&
+                sortItem.customType == item.customType) {
+              tempItem = sortItem;
+              break;
+            }
+          } else if (sortItem.type == item.type) {
+            tempItem = sortItem;
+            break;
+          }
+        }
+        if (tempItem == null) {
+          tempItem = item;
+          sortList.add(tempItem);
+        } else {
+          tempItem.actual += item.actual;
+        }
+      }
+      sortList.sort((left, right) => right.actual.compareTo(left.actual));
+      if (sortList.isNotEmpty && sortList.length > MAX_DETAIL_COUNT) {
+        dailyList = sortList.sublist(MAX_DETAIL_COUNT);
+      }
+    }
+
     for (ActivityItem item in dailyList) {
       int timeInt = item.time;
       DateTime time = DateTime.fromMillisecondsSinceEpoch(timeInt);
       int dayCount = getMonthDayCount(time);
       int actualSeconds = item.actual;
-      double actualHours =
-          double.parse((actualSeconds / (60 * 60)).toStringAsFixed(2));
+      double actualHours = actualSeconds / (60 * 60);
+//          double.parse((actualSeconds / (60 * 60)).toStringAsFixed(2));
       int index = time.month - 1;
       double tempTime = data[index].time;
       tempTime += actualHours;
@@ -804,6 +986,7 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
         await DatabaseHelper.internal().selectActivities();
     List<ActivityItem> dailyList = new List();
     for (ActivityItem item in activities) {
+      if (item.actual < 60) continue;
       int timeInt = item.time;
       DateTime itemTime = DateTime.fromMillisecondsSinceEpoch(timeInt);
       if (itemTime.year == dateTime.year) {
@@ -814,15 +997,35 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
   }
 
   Future<List<ActivityItem>> _getDailyListByYearAndType(
-      DateTime dateTime, int type) async {
+      DateTime dateTime, int type, int customType) async {
     List<ActivityItem> activities =
         await DatabaseHelper.internal().selectActivities();
     List<ActivityItem> dailyList = new List();
+    bool isIndoor = type & ActivityItem.TYPE_INDOOR != 0;
     for (ActivityItem item in activities) {
+      if (item.actual < 60) continue;
       int timeInt = item.time;
       DateTime itemTime = DateTime.fromMillisecondsSinceEpoch(timeInt);
-      if (itemTime.year == dateTime.year && item.type == type) {
-        dailyList.add(item);
+      if (itemTime.year == dateTime.year) {
+        if (item.type == type) {
+          if (customType != 0) {
+            if (item.customType == customType) {
+              dailyList.add(item);
+            }
+          } else {
+            dailyList.add(item);
+          }
+        } else if (type & ActivityItem.TYPE_OTHER_TOTAL != 0) {
+          if (isIndoor) {
+            if (item.type & ActivityItem.TYPE_INDOOR != 0) {
+              dailyList.add(item);
+            }
+          } else {
+            if (item.type & ActivityItem.TYPE_OUTDOOR != 0) {
+              dailyList.add(item);
+            }
+          }
+        }
       }
     }
     return dailyList;
@@ -915,26 +1118,39 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
     double total = 0;
     for (ActivityData item in data) {
       total += item.time;
-    }
+     }
     int averageTotal = 0;
     if (_isDChecked) {
       /// daily chart, the unit is minute
-      averageTotal = total ~/ data.length;
+      averageTotal = total ~/ 1;// ~/ data.length;
     } else {
       /// Others, the unit is hour
-      averageTotal = (total * 60) ~/ data.length;
+      print('LJY total $total');
+      averageTotal = (total * 60) ~/1;//data.length;
+      print('LJY $averageTotal');
     }
     int hour = averageTotal ~/ 60;
-    int min = averageTotal % 60;
+    int min = averageTotal - (hour * 60);
     _averageHour = '$hour';
     _averageMin = '$min';
   }
 
-  _setTitle(int itemType) {
-    if (itemType == ActivityItem.TYPE_NONE) {
-      _title = 'Vision status';
+  _setTitle() {
+    String indoorText = widget.itemType & ActivityItem.TYPE_INDOOR != 0
+        ? i18n.S.of(context).activity_indoor
+        : i18n.S.of(context).activity_outdoor;
+    if (widget.itemType == ActivityItem.TYPE_NONE) {
+      _title = i18n.S.of(context).vision_status_title;
     } else {
-      _title = getTypeString(itemType);
+      _title = getActivityTypeString(context, widget.itemType);
+      if (widget.itemType & ActivityItem.TYPE_CUSTOM != 0) {
+        _title = widget.customText;
+      } else if (widget.itemType & ActivityItem.TYPE_OTHER_TOTAL != 0) {
+        _title = i18n.S.of(context).activity_others;
+      }
+    }
+    if (widget.itemType != 0) {
+      _title = '$indoorText $_title';
     }
   }
 
@@ -957,13 +1173,13 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
     _selectDay = _getDayString(_pickDate);
 
     if (_isDChecked) {
-      _createDailyDataState(_pickDate, itemType);
+      _createDailyDataState(_pickDate, widget.itemType, widget.customType);
     } else if (_isWChecked) {
-      _createWeekDataState(_pickDate, itemType);
+      _createWeekDataState(_pickDate, widget.itemType, widget.customType);
     } else if (_isMChecked) {
-      _createMonthDataState(_pickDate, itemType);
+      _createMonthDataState(_pickDate, widget.itemType, widget.customType);
     } else if (_isYChecked) {
-      _createYearDataState(_pickDate, itemType);
+      _createYearDataState(_pickDate, widget.itemType, widget.customType);
     }
   }
 
@@ -985,20 +1201,20 @@ class _ActivityChartWidgetState extends State<ActivityChartWidget> {
     _selectDay = _getDayString(_pickDate);
 
     if (_isDChecked) {
-      _createDailyDataState(_pickDate, itemType);
+      _createDailyDataState(_pickDate, widget.itemType, widget.customType);
     } else if (_isWChecked) {
-      _createWeekDataState(_pickDate, itemType);
+      _createWeekDataState(_pickDate, widget.itemType, widget.customType);
     } else if (_isMChecked) {
-      _createMonthDataState(_pickDate, itemType);
+      _createMonthDataState(_pickDate, widget.itemType, widget.customType);
     } else if (_isYChecked) {
-      _createYearDataState(_pickDate, itemType);
+      _createYearDataState(_pickDate, widget.itemType, widget.customType);
     }
   }
 
   _checkNextEnable() {
     DateTime startDate = DateTime.now();
     DateTime dateTime =
-    DateTime(_pickDate.year, _pickDate.month, _pickDate.day);
+        DateTime(_pickDate.year, _pickDate.month, _pickDate.day);
     int dayCount = getMonthDayCount(dateTime);
     if (_isDChecked) {
       dateTime = dateTime.add(Duration(days: 1));

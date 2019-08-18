@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="21px" height="20px" viewBox="0 0 21 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 56.3 (81716) - https://sketch.com -->
+    <title>ic_Customise_outdoor</title>
+    <desc>Created with Sketch.</desc>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="ic_Customise_outdoor" transform="translate(-11.000000, -11.000000)">
+            <circle id="Oval" fill-rule="nonzero" cx="21" cy="21" r="21"></circle>
+            <g id="round-nature_people-24px" transform="translate(9.000000, 9.000000)">
+                <polygon id="Path" points="0 0 24 0 24 24 0 24"></polygon>
+                <circle id="Oval" fill="#FFFFFF" fill-rule="nonzero" cx="4.5" cy="9.5" r="1.5"></circle>
+                <path d="M22.17,9.17 C22.17,5.26 18.98,2.11 15.06,2.17 C11.23,2.23 8.07,5.54 8.18,9.36 C8.27,12.74 10.76,15.52 14.01,16.06 L14.01,20 L6,20 L6,17 L6.5,17 C6.78,17 7,16.78 7,16.5 L7,13 C7,12.45 6.55,12 6,12 L3,12 C2.45,12 2,12.45 2,13 L2,16.5 C2,16.78 2.22,17 2.5,17 L3,17 L3,21 C3,21.55 3.45,22 4,22 L18,22 C18.55,22 19,21.55 19,21 C19,20.45 18.55,20 18,20 L16,20 L16,16.12 C19.47,15.71 22.17,12.76 22.17,9.17 Z" id="Path" fill="#FFFFFF" fill-rule="nonzero"></path>
+            </g>
+        </g>
+    </g>
+</svg>

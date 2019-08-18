@@ -21,6 +21,7 @@ class DatabaseHelper {
   final String time = 'time';
 
   final String customTypeId = 'id';
+  final String inOutDoor = 'in_out_door';
   final String customTypeText = 'type_text';
 
   static Database _db;
@@ -49,7 +50,7 @@ class DatabaseHelper {
         'CREATE TABLE $tableActivity($columnId INTEGER PRIMARY KEY, '
         '$type INTEGER, $customType INTEGER, $target INTEGER, $actual INTEGER, $time INTEGER)');
     await db.execute(
-        'CREATE TABLE $tableCustomTypeDic($customTypeId INTEGER PRIMARY KEY, $customTypeText TEXT)');
+        'CREATE TABLE $tableCustomTypeDic($customTypeId INTEGER PRIMARY KEY, $inOutDoor INTEGER, $customTypeText TEXT)');
   }
 
   Future<int> insertActivity(ActivityItem activity) async {
@@ -77,6 +78,19 @@ class DatabaseHelper {
     return activities;
   }
 
+  Future<List> selectCustomList({int limit, int offset}) async {
+    var dbClient = await db;
+    var result = await dbClient.query(
+      tableCustomTypeDic,
+      columns: [customTypeId, inOutDoor, customTypeText],
+      limit: limit,
+      offset: offset,
+    );
+    List<CustomType> activities = [];
+    result.forEach((item) => activities.add(CustomType.fromSql(item)));
+    return activities;
+  }
+
   Future<int> getCount() async {
     var dbClient = await db;
     return Sqflite.firstIntValue(
@@ -92,9 +106,23 @@ class DatabaseHelper {
   Future<CustomType> getCustomType(String text) async {
     var dbClient = await db;
     List<Map> result = await dbClient.query(tableCustomTypeDic,
-        columns: [customTypeId, customTypeText],
+        columns: [customTypeId, inOutDoor, customTypeText],
         where: '$customTypeText = ?',
         whereArgs: [text]);
+
+    if (result.length > 0) {
+      return CustomType.fromSql(result.first);
+    }
+
+    return null;
+  }
+
+  Future<CustomType> getCustomTypeById(int customId) async {
+    var dbClient = await db;
+    List<Map> result = await dbClient.query(tableCustomTypeDic,
+        columns: [customTypeId, inOutDoor, customTypeText],
+        where: '$customTypeId = ?',
+        whereArgs: [customId]);
 
     if (result.length > 0) {
       return CustomType.fromSql(result.first);

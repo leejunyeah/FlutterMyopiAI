@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="220px" height="216px" viewBox="0 0 220 216" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 56.3 (81716) - https://sketch.com -->
+    <title>background_Others_outdoor</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="360" height="360"></rect>
+    </defs>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="background_Others_outdoor" transform="translate(-121.000000, -1.000000)">
+            <g id="Mask" fill-rule="nonzero">
+                <rect id="path-1" x="0" y="0" width="360" height="360"></rect>
+            </g>
+            <g id="round-nature_people-24px-Clipped">
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <g id="path-1"></g>
+                <g id="round-nature_people-24px" opacity="0.119999997" mask="url(#mask-2)">
+                    <g transform="translate(100.000000, -22.000000)" id="编组">
+                        <g>
+                            <polygon id="Path" points="0 0 260 0 260 260 0 260"></polygon>
+                            <circle id="Oval" fill="#FFFFFF" fill-rule="nonzero" cx="48.75" cy="102.916667" r="16.25"></circle>
+                            <path d="M240.175,99.3416667 C240.175,56.9833333 205.616667,22.8583333 163.15,23.5083333 C121.658333,24.1583333 87.425,60.0166667 88.6166667,101.4 C89.5916667,138.016667 116.566667,168.133333 151.775,173.983333 L151.775,216.666667 L65,216.666667 L65,184.166667 L70.4166667,184.166667 C73.45,184.166667 75.8333333,181.783333 75.8333333,178.75 L75.8333333,140.833333 C75.8333333,134.875 70.9583333,130 65,130 L32.5,130 C26.5416667,130 21.6666667,134.875 21.6666667,140.833333 L21.6666667,178.75 C21.6666667,181.783333 24.05,184.166667 27.0833333,184.166667 L32.5,184.166667 L32.5,227.5 C32.5,233.458333 37.375,238.333333 43.3333333,238.333333 L195,238.333333 C200.958333,238.333333 205.833333,233.458333 205.833333,227.5 C205.833333,221.541667 200.958333,216.666667 195,216.666667 L173.333333,216.666667 L173.333333,174.633333 C210.925,170.191667 240.175,138.233333 240.175,99.3416667 Z" id="Path" fill="#FFFFFF" fill-rule="nonzero"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

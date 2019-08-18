@@ -62,7 +62,7 @@ class _DialogExitRecording extends State<DialogExitRecording> {
                               //'CANCEL',
                               S.of(context).cancel,
                               style:
-                              TextStyle(color: Color(0xFF000000), fontSize: 18),
+                              TextStyle(color: RECORDING_DIALOG_BUTTON, fontSize: 14),
                             ),
                           ),
                         ),
@@ -78,7 +78,7 @@ class _DialogExitRecording extends State<DialogExitRecording> {
                               //'OK',
                               S.of(context).ok,
                               style:
-                              TextStyle(color: Color(0xE2F82E47), fontSize: 18),
+                              TextStyle(color: RECORDING_DIALOG_BUTTON, fontSize: 14),
                             ),
                           ),
                         ),

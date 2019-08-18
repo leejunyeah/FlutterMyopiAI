@@ -39,13 +39,13 @@ class WelcomePageState extends State<WelcomePage> {
           SizedBox(
             height: 153,
           ),
-          SizedBox(
-            height: 108,
-            width: 108,
-            child: icApp,
+          Container(
+            width: double.infinity,
+            alignment: Alignment.center,
+            child: icLogo,
           ),
           SizedBox(
-            height: 75,
+            height: 62,
           ),
           Text(
 //            'Welcome to MyopiAI',

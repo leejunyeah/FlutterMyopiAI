@@ -33,7 +33,7 @@ public class NotificationCompatV extends NotificationCompat {
         PendingIntent endIntent = PendingIntent.getService(context, 0,
                 startRecordService(context, RecordingService.ACTION_END_NOTIFICATION), PendingIntent.FLAG_UPDATE_CURRENT);
 
-        builder.setSmallIcon(R.drawable.ic_app_icon);
+        builder.setSmallIcon(R.drawable.ic_app_icon_notification);
 
         builder.setContentIntent(mainPending);
 
@@ -60,7 +60,7 @@ public class NotificationCompatV extends NotificationCompat {
 
         Notification.Builder builder = new Notification.Builder(context);
 
-        builder.setSmallIcon(R.drawable.ic_app_icon);
+        builder.setSmallIcon(R.drawable.ic_app_icon_notification);
 
         builder.setContentIntent(mainPending);
 

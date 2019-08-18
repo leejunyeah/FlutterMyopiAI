@@ -28,6 +28,7 @@ public class MainActivity extends FlutterActivity {
         GeneratedPluginRegistrant.registerWith(this);
         // Flutter to Android
         registerRecordPlugin(this);
+        registSettingsPlugin(this);
 
         // Android to Flutter
         endRecordPlugin = MyFlutterEventPlugin.registerEndRecordWith(END_CHANNEL,this);
@@ -38,6 +39,10 @@ public class MainActivity extends FlutterActivity {
 
     private static void registerRecordPlugin(PluginRegistry registrar) {
         RecordAction.registerWith(registrar.registrarFor(RecordAction.CHANNEL));
+    }
+
+    private static void registSettingsPlugin(PluginRegistry registrar) {
+        SettingsAction.registerWith(registrar.registrarFor(SettingsAction.CHANNEL));
     }
 
     public static void endRecordActivity() {

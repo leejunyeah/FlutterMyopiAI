@@ -2,6 +2,7 @@
     package="com.myopia.flutter_myopia_ai">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <!-- io.flutter.app.FlutterApplication is an android.app.Application that
          calls FlutterMain.startInitialization(this); in its onCreate method.
@@ -40,6 +41,7 @@
                 <action android:name="myopia.continue.record.action" />
                 <action android:name="myopia.end.record.action" />
                 <action android:name="myopia.end.notification.record.action" />
+                <action android:name="myopia.play.vibrate" />
             </intent-filter>
         </service>
     </application>

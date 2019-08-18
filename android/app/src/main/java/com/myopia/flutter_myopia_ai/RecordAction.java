@@ -56,6 +56,10 @@ public class RecordAction implements MethodChannel.MethodCallHandler {
                 LightSensorManager.getInstance(this.activity).setCanNotifyLight(canNotify);
                 result.success("success");
                 break;
+            case "_playVibrate":
+                startRecordService(RecordingService.ACTION_PLAY_VIBRATE);
+                result.success("success");
+                break;
             default:
                 result.notImplemented();
                 break;

@@ -6,13 +6,18 @@ class ActivityItem {
   static const TYPE_COMPUTER = 1<<2;
   static const TYPE_TV = 1<<3;
   static const TYPE_PHONE = 1<<4;
-  static const TYPE_SPORTS = 1<<5;
-  static const TYPE_HIKE = 1<<6;
-  static const TYPE_SWIM = 1<<7;
-  static const TYPE_CUSTOM = 1<<8;
+  static const TYPE_GAMES = 1<<5;
 
-  static const TYPE_INDOOR = 1<<9;
-  static const TYPE_OUTDOOR = 1<<10;
+  static const TYPE_SPORTS = 1<<6;
+  static const TYPE_HIKE = 1<<7;
+  static const TYPE_SWIM = 1<<8;
+  static const TYPE_RUN = 1<<9;
+  static const TYPE_BIKE = 1<<10;
+  static const TYPE_CUSTOM = 1<<11;
+
+  static const TYPE_INDOOR = 1<<12;
+  static const TYPE_OUTDOOR = 1<<13;
+  static const TYPE_OTHER_TOTAL = 1<<14;
 
   /// Activity id
   int id;

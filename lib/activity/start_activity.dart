@@ -11,6 +11,10 @@ import 'package:flutter_myopia_ai/data/database_helper.dart';
 import '../generated/i18n.dart';
 
 class StartActivity extends StatefulWidget {
+  final bool forStartActivity;
+
+  StartActivity({this.forStartActivity = true});
+
   @override
   _StartActivityState createState() => new _StartActivityState();
 }
@@ -24,10 +28,15 @@ class _StartActivityState extends State<StartActivity> {
   String _newCustomTypeString;
   DateTime _targetTime;
 
+  List<CustomType> _customList;
+  List<_SelectActivity> _selectOutActivityList;
+  List<_SelectActivity> _selectInActivityList;
+  CustomType _historyCustomType;
+
   @override
   void initState() {
-    super.initState();
     _isTargetChecked = false;
+    super.initState();
   }
 
   _setupPickString() {
@@ -59,9 +68,12 @@ class _StartActivityState extends State<StartActivity> {
   @override
   Widget build(BuildContext context) {
     _setupPickString();
+    _loadList();
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text(S.of(context).start_new_activity),
+        title: new Text(widget.forStartActivity
+            ? S.of(context).start_new_activity
+            : S.of(context).add_new_activity),
         backgroundColor: COLOR_MAIN_GREEN,
       ),
       body: Padding(
@@ -99,10 +111,13 @@ class _StartActivityState extends State<StartActivity> {
                 ],
               ),
             ),
-            _buiLdTargetTile(),
+            Offstage(
+              offstage: !widget.forStartActivity,
+              child: _buiLdTargetTile(),
+            ),
             _buildTimePicker(),
             Offstage(
-              offstage: _isTargetChecked,
+              offstage: _isTargetChecked || !widget.forStartActivity,
               child: SizedBox(
                 height: 180,
               ),
@@ -267,7 +282,7 @@ class _StartActivityState extends State<StartActivity> {
 
   Widget _buildTimePicker() {
     return Offstage(
-      offstage: !this._isTargetChecked,
+      offstage: !this._isTargetChecked && widget.forStartActivity,
       child: Container(
         padding: EdgeInsets.all(16),
         child: Card(
@@ -291,9 +306,7 @@ class _StartActivityState extends State<StartActivity> {
               itemHeight: 50,
               isForce2Digits: true,
               onTimeChange: (time) {
-                setState(() {
-                  _targetTime = time;
-                });
+                _targetTime = time;
               },
             ),
           ),
@@ -322,12 +335,14 @@ class _StartActivityState extends State<StartActivity> {
               colorBrightness: Brightness.dark,
               splashColor: Colors.grey,
               child: Text(
-                S.of(context).start,
+                widget.forStartActivity
+                    ? S.of(context).start
+                    : S.of(context).activity_add_btn,
                 style: TextStyle(fontSize: 18, color: Color(0xFFFFFFFF)),
               ),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24.0)),
-              onPressed: _startAction,
+              onPressed: widget.forStartActivity ? _startAction : _addAction,
             ),
           ),
           SizedBox(
@@ -342,9 +357,7 @@ class _StartActivityState extends State<StartActivity> {
     if (_newActivityValue == ActivityItem.TYPE_CUSTOM) {
       if (_newCustomTypeString == null || _newCustomTypeString.trim() == '') {
         Fluttertoast.showToast(
-          msg: S
-              .of(context)
-              .activity_empty_custom,
+          msg: S.of(context).activity_empty_custom,
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIos: 1,
@@ -353,11 +366,18 @@ class _StartActivityState extends State<StartActivity> {
       }
     }
     ActivityItem activityItem = await _saveStart();
+    String title;
+    if (activityItem.type & ActivityItem.TYPE_CUSTOM != 0) {
+      title = _newCustomTypeString;
+    } else {
+      title = getActivityTypeString(context, activityItem.type);
+    }
     int result = await Navigator.push(
       context,
       new MaterialPageRoute(
           builder: (context) => new RecordingActivity(
                 activityItem: activityItem,
+                title: title,
                 isTargetChecked: _isTargetChecked,
               )),
     );
@@ -366,96 +386,89 @@ class _StartActivityState extends State<StartActivity> {
     }
   }
 
+  void _addAction() async {
+    if (_newActivityValue == ActivityItem.TYPE_CUSTOM) {
+      if (_newCustomTypeString == null || _newCustomTypeString.trim() == '') {
+        Fluttertoast.showToast(
+          msg: S.of(context).activity_empty_custom,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIos: 1,
+        );
+        return;
+      }
+    }
+    await _saveStart();
+    Navigator.pop(context, HOME_TO_START_ACTIVITY);
+  }
+
   void _showIndoorActivityDialog() {
+    List<Widget> children = [];
+    children.add(
+      Container(
+        padding: EdgeInsets.all(24),
+        child: Text(
+          S.of(context).activity_title,
+          style: TextStyle(fontSize: 20, color: Color(0xDD000000)),
+        ),
+      ),
+    );
+    if (_selectInActivityList != null) {
+      _selectInActivityList.forEach(
+            (element) {
+          if (element.customType != null) {
+            children.add(
+              RadioListTile<int>(
+                activeColor: COLOR_MAIN_GREEN,
+                value: element.type,
+                title: Text(
+                  element.customType.typeText,
+                  style: TextStyle(fontSize: 16, color: Color(0x89000000)),
+                ),
+                groupValue: _newActivityValue,
+                onChanged: (value) {
+                  setState(
+                        () {
+                      _newActivityValue = element.type;
+                      _historyCustomType = element.customType;
+                      _newPickActivityString = element.customType.typeText;
+                    },
+                  );
+                  Navigator.of(context).pop();
+                },
+              ),
+            );
+          } else {
+            children.add(
+              RadioListTile<int>(
+                activeColor: COLOR_MAIN_GREEN,
+                value: element.type,
+                title: Text(
+                  element.text,
+                  style: TextStyle(fontSize: 16, color: Color(0x89000000)),
+                ),
+                groupValue: _newActivityValue,
+                onChanged: (value) {
+                  setState(
+                        () {
+                      _newActivityValue = element.type;
+                      _historyCustomType = null;
+                      _newPickActivityString = element.text;
+                    },
+                  );
+                  Navigator.of(context).pop();
+                },
+              ),
+            );
+          }
+        },
+      );
+    }
+
     var dialog = new Dialog(
       shape: CARD_SHAPE,
       child: new SingleChildScrollView(
-        child: ListBody(children: <Widget>[
-          Container(
-            padding: EdgeInsets.all(24),
-            child: Text(
-              //'Activity',
-              S.of(context).activity_title,
-              style: TextStyle(fontSize: 20, color: Color(0xDD000000)),
-            ),
-          ),
-          RadioListTile<int>(
-              activeColor: COLOR_MAIN_GREEN,
-              value: ActivityItem.TYPE_READING,
-              title: Text(
-                S.of(context).activity_reading,
-                style: TextStyle(fontSize: 16, color: Color(0x89000000)),
-              ),
-              groupValue: _newActivityValue,
-              onChanged: (value) {
-                setState(() {
-                  _newActivityValue = ActivityItem.TYPE_READING;
-                  _newPickActivityString = S.of(context).activity_reading;
-                });
-                Navigator.of(context).pop();
-              }),
-          RadioListTile<int>(
-              activeColor: COLOR_MAIN_GREEN,
-              value: ActivityItem.TYPE_COMPUTER,
-              title: Text(
-                S.of(context).activity_front_computer,
-                style: TextStyle(fontSize: 16, color: Color(0x89000000)),
-              ),
-              groupValue: _newActivityValue,
-              onChanged: (value) {
-                setState(() {
-                  _newActivityValue = ActivityItem.TYPE_COMPUTER;
-                  _newPickActivityString =
-                      S.of(context).activity_front_computer;
-                });
-                Navigator.of(context).pop();
-              }),
-          RadioListTile<int>(
-              activeColor: COLOR_MAIN_GREEN,
-              value: ActivityItem.TYPE_TV,
-              title: Text(
-                S.of(context).activity_tv,
-                style: TextStyle(fontSize: 16, color: Color(0x89000000)),
-              ),
-              groupValue: _newActivityValue,
-              onChanged: (value) {
-                setState(() {
-                  _newActivityValue = ActivityItem.TYPE_TV;
-                  _newPickActivityString = S.of(context).activity_tv;
-                });
-                Navigator.of(context).pop();
-              }),
-          RadioListTile<int>(
-              activeColor: COLOR_MAIN_GREEN,
-              value: ActivityItem.TYPE_PHONE,
-              title: Text(
-                S.of(context).activity_using_phone,
-                style: TextStyle(fontSize: 16, color: Color(0x89000000)),
-              ),
-              groupValue: _newActivityValue,
-              onChanged: (value) {
-                setState(() {
-                  _newActivityValue = ActivityItem.TYPE_PHONE;
-                  _newPickActivityString = S.of(context).activity_using_phone;
-                });
-                Navigator.of(context).pop();
-              }),
-          RadioListTile<int>(
-              activeColor: COLOR_MAIN_GREEN,
-              value: ActivityItem.TYPE_CUSTOM,
-              title: Text(
-                S.of(context).activity_customise,
-                style: TextStyle(fontSize: 16, color: Color(0x89000000)),
-              ),
-              groupValue: _newActivityValue,
-              onChanged: (value) {
-                setState(() {
-                  _newActivityValue = ActivityItem.TYPE_CUSTOM;
-                  _newPickActivityString = S.of(context).activity_customise;
-                });
-                Navigator.of(context).pop();
-              }),
-        ]),
+        child: ListBody(children: children),
       ),
     );
     showDialog(
@@ -468,78 +481,71 @@ class _StartActivityState extends State<StartActivity> {
   }
 
   void _showOutdoorActivityDialog() {
+    List<Widget> children = [];
+    children.add(
+      Container(
+        padding: EdgeInsets.all(24),
+        child: Text(
+          S.of(context).activity_title,
+          style: TextStyle(fontSize: 20, color: Color(0xDD000000)),
+        ),
+      ),
+    );
+    if (_selectOutActivityList != null) {
+      _selectOutActivityList.forEach(
+        (element) {
+          if (element.customType != null) {
+            children.add(
+              RadioListTile<int>(
+                activeColor: COLOR_MAIN_GREEN,
+                value: element.type,
+                title: Text(
+                  element.customType.typeText,
+                  style: TextStyle(fontSize: 16, color: Color(0x89000000)),
+                ),
+                groupValue: _newActivityValue,
+                onChanged: (value) {
+                  setState(
+                    () {
+                      _newActivityValue = element.type;
+                      _historyCustomType = element.customType;
+                      _newPickActivityString = element.customType.typeText;
+                    },
+                  );
+                  Navigator.of(context).pop();
+                },
+              ),
+            );
+          } else {
+            children.add(
+              RadioListTile<int>(
+                activeColor: COLOR_MAIN_GREEN,
+                value: element.type,
+                title: Text(
+                  element.text,
+                  style: TextStyle(fontSize: 16, color: Color(0x89000000)),
+                ),
+                groupValue: _newActivityValue,
+                onChanged: (value) {
+                  setState(
+                    () {
+                      _newActivityValue = element.type;
+                      _historyCustomType = null;
+                      _newPickActivityString = element.text;
+                    },
+                  );
+                  Navigator.of(context).pop();
+                },
+              ),
+            );
+          }
+        },
+      );
+    }
     var dialog = new Dialog(
       shape: CARD_SHAPE,
       child: new SingleChildScrollView(
-        child: ListBody(children: <Widget>[
-          Container(
-            padding: EdgeInsets.all(24),
-            child: Text(
-              S.of(context).activity_title,
-              style: TextStyle(fontSize: 20, color: Color(0xDD000000)),
-            ),
-          ),
-          RadioListTile<int>(
-              activeColor: COLOR_MAIN_GREEN,
-              value: ActivityItem.TYPE_SPORTS,
-              title: Text(
-                S.of(context).activity_sports,
-                style: TextStyle(fontSize: 16, color: Color(0x89000000)),
-              ),
-              groupValue: _newActivityValue,
-              onChanged: (value) {
-                setState(() {
-                  _newActivityValue = ActivityItem.TYPE_SPORTS;
-                  _newPickActivityString = S.of(context).activity_sports;
-                });
-                Navigator.of(context).pop();
-              }),
-          RadioListTile<int>(
-              activeColor: COLOR_MAIN_GREEN,
-              value: ActivityItem.TYPE_HIKE,
-              title: Text(
-                S.of(context).activity_hike,
-                style: TextStyle(fontSize: 16, color: Color(0x89000000)),
-              ),
-              groupValue: _newActivityValue,
-              onChanged: (value) {
-                setState(() {
-                  _newActivityValue = ActivityItem.TYPE_HIKE;
-                  _newPickActivityString = S.of(context).activity_hike;
-                });
-                Navigator.of(context).pop();
-              }),
-          RadioListTile<int>(
-              activeColor: COLOR_MAIN_GREEN,
-              value: ActivityItem.TYPE_SWIM,
-              title: Text(
-                S.of(context).activity_swim,
-                style: TextStyle(fontSize: 16, color: Color(0x89000000)),
-              ),
-              groupValue: _newActivityValue,
-              onChanged: (value) {
-                setState(() {
-                  _newActivityValue = ActivityItem.TYPE_SWIM;
-                  _newPickActivityString = S.of(context).activity_swim;
-                });
-                Navigator.of(context).pop();
-              }),
-          RadioListTile<int>(
-              activeColor: COLOR_MAIN_GREEN,
-              value: ActivityItem.TYPE_CUSTOM,
-              title: Text(
-                S.of(context).activity_customise,
-                style: TextStyle(fontSize: 16, color: Color(0x89000000)),
-              ),
-              groupValue: _newActivityValue,
-              onChanged: (value) {
-                setState(() {
-                  _newActivityValue = ActivityItem.TYPE_CUSTOM;
-                  _newPickActivityString = S.of(context).activity_customise;
-                });
-                Navigator.of(context).pop();
-              }),
-        ]),
+        child: ListBody(children: children),
       ),
     );
     showDialog(
@@ -617,6 +623,7 @@ class _StartActivityState extends State<StartActivity> {
   Future<ActivityItem> _saveStart() async {
     int count = await DatabaseHelper.internal().getCount();
     int customTypeId = 0;
+    int itemType = _newTypeValue | _newActivityValue;
     if (_newActivityValue == ActivityItem.TYPE_CUSTOM) {
       CustomType findType =
           await DatabaseHelper.internal().getCustomType(_newCustomTypeString);
@@ -625,24 +632,28 @@ class _StartActivityState extends State<StartActivity> {
         customTypeId++;
         CustomType customType = new CustomType(
           id: customTypeId,
+          inOutDoor: _newTypeValue,
           typeText: _newCustomTypeString,
         );
         await DatabaseHelper.internal().insertCustomType(customType);
       } else {
         customTypeId = findType.id;
       }
+    } else if (_historyCustomType != null) {
+      itemType = _newTypeValue | ActivityItem.TYPE_CUSTOM;
+      customTypeId = _historyCustomType.id;
     }
 
     int id = count + 1;
     ActivityItem activityItem = new ActivityItem(
       id: id,
       time: DateTime.now().millisecondsSinceEpoch,
-      type: _newTypeValue | _newActivityValue,
+      type: itemType,
       customType: customTypeId,
-      target: _targetTime == null || !_isTargetChecked
+      target: (_targetTime == null || !_isTargetChecked)
           ? 0
           : _parseTargetTimeToSecond(),
-      actual: 0,
+      actual: widget.forStartActivity ? 0 : _parseTargetTimeToSecond(),
     );
     await DatabaseHelper.internal().insertActivity(activityItem);
     return activityItem;
@@ -652,7 +663,101 @@ class _StartActivityState extends State<StartActivity> {
     int targetTime = 0;
     if (_isTargetChecked && _targetTime != null) {
       targetTime = _targetTime.minute * 60 + _targetTime.hour * 60 * 60;
+    } else if (!widget.forStartActivity) {
+      if (_targetTime == null) {
+        targetTime = 30 * 60; // default is 20 mins
+      } else {
+        targetTime = _targetTime.minute * 60 + _targetTime.hour * 60 * 60;
+      }
     }
     return targetTime;
   }
+
+  _loadList() async {
+    _customList = await DatabaseHelper.internal().selectCustomList();
+    // For outdoor
+    _selectOutActivityList = [];
+    _selectOutActivityList.add(_SelectActivity(
+      type: ActivityItem.TYPE_SPORTS,
+      text: S.of(context).activity_sports,
+    ));
+    _selectOutActivityList.add(_SelectActivity(
+      type: ActivityItem.TYPE_HIKE,
+      text: S.of(context).activity_hike,
+    ));
+    _selectOutActivityList.add(_SelectActivity(
+      type: ActivityItem.TYPE_SWIM,
+      text: S.of(context).activity_swim,
+    ));
+    _selectOutActivityList.add(_SelectActivity(
+      type: ActivityItem.TYPE_RUN,
+      text: S.of(context).activity_run,
+    ));
+    _selectOutActivityList.add(_SelectActivity(
+      type: ActivityItem.TYPE_BIKE,
+      text: S.of(context).activity_bike,
+    ));
+
+    // For indoor
+    _selectInActivityList = [];
+    _selectInActivityList.add(_SelectActivity(
+      type: ActivityItem.TYPE_READING,
+      text: S.of(context).activity_reading,
+    ));
+    _selectInActivityList.add(_SelectActivity(
+      type: ActivityItem.TYPE_COMPUTER,
+      text: S.of(context).activity_front_computer,
+    ));
+    _selectInActivityList.add(_SelectActivity(
+      type: ActivityItem.TYPE_TV,
+      text: S.of(context).activity_tv,
+    ));
+    _selectInActivityList.add(_SelectActivity(
+      type: ActivityItem.TYPE_PHONE,
+      text: S.of(context).activity_using_phone,
+    ));
+    _selectInActivityList.add(_SelectActivity(
+      type: ActivityItem.TYPE_GAMES,
+      text: S.of(context).activity_playing_games,
+    ));
+
+    // Load customise history
+    int inIndex = 1;
+    int outIndex = 1;
+    for (int i = _customList.length - 1; i >= 0; i--) {
+      CustomType element = _customList[i];
+      if (element.inOutDoor == ActivityItem.TYPE_INDOOR && inIndex < 5) {
+        _selectInActivityList.add(_SelectActivity(
+          type: ActivityItem.TYPE_OTHER_TOTAL << inIndex,
+          customType: element,
+        ));
+        inIndex++;
+      } else if (element.inOutDoor == ActivityItem.TYPE_OUTDOOR && outIndex < 5) {
+        _selectOutActivityList.add(_SelectActivity(
+          type: ActivityItem.TYPE_OTHER_TOTAL << outIndex,
+          customType: element,
+        ));
+        outIndex++;
+      }
+    }
+
+    // Load last customize
+    _selectOutActivityList.add(_SelectActivity(
+      type: ActivityItem.TYPE_CUSTOM,
+      text: S.of(context).activity_customise,
+    ));
+    _selectInActivityList.add(_SelectActivity(
+      type: ActivityItem.TYPE_CUSTOM,
+      text: S.of(context).activity_customise,
+    ));
+
+    setState(() {});
+  }
+}
+
+class _SelectActivity {
+  int type;
+  String text;
+  CustomType customType;
+  _SelectActivity({this.type, this.text, this.customType});
 }

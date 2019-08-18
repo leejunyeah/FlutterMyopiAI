@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:audioplayers/audio_cache.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_myopia_ai/activity/dailog_exit_recording.dart';
@@ -17,23 +20,21 @@ import '../generated/i18n.dart';
 class RecordingActivity extends StatefulWidget {
   final bool isTargetChecked;
   final ActivityItem activityItem;
-  RecordingActivity({this.activityItem, this.isTargetChecked});
+  final String title;
+  RecordingActivity({this.activityItem, this.title, this.isTargetChecked});
 
   @override
-  _RecordingActivityState createState() => new _RecordingActivityState(
-      activityItem: activityItem, isTargetChecked: isTargetChecked);
+  _RecordingActivityState createState() => new _RecordingActivityState();
 }
 
-class _RecordingActivityState extends State<RecordingActivity> {
+class _RecordingActivityState extends State<RecordingActivity>
+    with SingleTickerProviderStateMixin {
   static const recordPlugin =
       const MethodChannel('com.myopia.flutter_myopia_ai/record');
 
   static const int TIMER_S = 59;
   static const int TIMER_M = 59;
   static const int TIMER_H = 99;
-
-  final ActivityItem activityItem;
-  final bool isTargetChecked;
 
   List<charts.Series<LightConditionChart, int>> _seriesList;
   List<int> lightList = [];
@@ -45,10 +46,13 @@ class _RecordingActivityState extends State<RecordingActivity> {
   int _counterS = 0;
   int _timerCounter = 0;
   int _updateTime = 0;
+  int _show202020Counter = 1;
 
   bool _isDialogShowing = false;
   bool _lightSensorValid = false;
   bool _isLightWarningShowing = false;
+  bool _isLightRemind = true;
+  bool _timesUpWarned = false;
 
   String _targetString = "";
   String _divider = ":";
@@ -56,7 +60,7 @@ class _RecordingActivityState extends State<RecordingActivity> {
   String _mins = '00';
   String _sec = '00';
 
-  String _recordingType = '';
+  Color _mainColor;
 
   final TextStyle _counterStyle = const TextStyle(
     fontSize: 72,
@@ -72,14 +76,25 @@ class _RecordingActivityState extends State<RecordingActivity> {
   static const lightWarningPlugin =
       const EventChannel('com.myopia.flutter_myopia_ai/light_warning_plugin');
 
-  _RecordingActivityState({this.activityItem, this.isTargetChecked});
+  AudioCache _audioCache;
+  AudioPlayer _audioPlayer;
+  File _lightWarningAudio;
+  File _warning20Audio;
+  File _targetTimesUp;
+
+  AnimationController _targetAnimController;
+
+  _RecordingActivityState();
 
   @override
   void initState() {
+    _show202020Counter = 1;
+    _mainColor = getActivityColor(widget.activityItem.type);
     lightList.add(0);
     _seriesList = _createLightData();
-    _isRunning = true;
     _targetString = _parseTargetTimeToString();
+    _isRunning = true;
+    _initAudioPlayer();
     _startRecord();
     endRecordPlugin
         .receiveBroadcastStream()
@@ -94,7 +109,57 @@ class _RecordingActivityState extends State<RecordingActivity> {
         .receiveBroadcastStream()
         .listen(_onLightWarning, onError: _onError);
     _hasLightSensor();
+    _initAnim();
     super.initState();
+  }
+
+  _initAnim() {
+    //AnimationController是一个特殊的Animation对象，在屏幕刷新的每一帧，就会生成一个新的值，
+    // 默认情况下，AnimationController在给定的时间段内会线性的生成从0.0到1.0的数字
+    //用来控制动画的开始与结束以及设置动画的监听
+    //vsync参数，存在vsync时会防止屏幕外动画（动画的UI不在当前屏幕时）消耗不必要的资源
+    //duration 动画的时长，这里设置的 seconds: 2 为2秒，当然也可以设置毫秒 milliseconds：2000.
+    _targetAnimController = AnimationController(
+        duration: const Duration(milliseconds: 500), vsync: this);
+    //动画开始、结束、向前移动或向后移动时会调用StatusListener
+    _targetAnimController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        //动画从 controller.forward() 正向执行 结束时会回调此方法
+        _targetAnimController.reverse();
+      } else if (status == AnimationStatus.dismissed) {
+        //动画从 controller.reverse() 反向执行 结束时会回调此方法
+        _targetAnimController.forward();
+        print("status is dismissed");
+      } else if (status == AnimationStatus.forward) {
+        print("status is forward");
+        //执行 controller.forward() 会回调此状态
+      } else if (status == AnimationStatus.reverse) {
+        //执行 controller.reverse() 会回调此状态
+        print("status is reverse");
+      }
+    });
+  }
+
+  _initAudioPlayer() async {
+    _audioCache = new AudioCache();
+    _audioPlayer = new AudioPlayer();
+    _lightWarningAudio = await _audioCache.load('light_warning.mp3');
+    _warning20Audio = await _audioCache.load('20_warning.mp3');
+    _targetTimesUp = await _audioCache.load('target_times_up.mp3');
+  }
+
+  _releasePlayer() {
+    if (_audioPlayer != null) {
+      _audioPlayer.stop();
+      _audioPlayer.release();
+    }
+    if (_audioCache != null) {
+      _audioCache.clearCache();
+    }
+  }
+
+  Future _playLocal(File file) async {
+    await _audioPlayer.play(file.path, isLocal: true);
   }
 
   _onEvent(Object event) {
@@ -121,13 +186,20 @@ class _RecordingActivityState extends State<RecordingActivity> {
   }
 
   _onLightWarning(Object event) {
-    if (!_isLightWarningShowing) {
+    if (!_isLightWarningShowing && _isLightRemind) {
       _isLightWarningShowing = true;
+      if (_lightWarningAudio != null) {
+        _playLocal(_lightWarningAudio);
+      }
+      _playVibrate();
       showDialog(
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) {
-          return DialogLightWarning(onConfirm: () => _isLightWarningShowing = false,);
+          return DialogLightWarning(
+            onConfirm: () => _isLightWarningShowing = false,
+            onNotRemind: () => _isLightRemind = false,
+          );
         },
       );
     }
@@ -140,6 +212,8 @@ class _RecordingActivityState extends State<RecordingActivity> {
   @override
   void dispose() {
     _isRunning = false;
+    _targetAnimController.dispose();
+    _releasePlayer();
     _endRecord();
     _updateData();
     super.dispose();
@@ -147,12 +221,11 @@ class _RecordingActivityState extends State<RecordingActivity> {
 
   @override
   Widget build(BuildContext context) {
-    _recordingType = getActivityTypeString(context, this.activityItem.type);
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
         appBar: new AppBar(
-          backgroundColor: getActivityColor(activityItem.type),
+          backgroundColor: _mainColor,
           elevation: 0,
         ),
         body: _buildBodyContent(),
@@ -169,10 +242,10 @@ class _RecordingActivityState extends State<RecordingActivity> {
             child: Container(
               width: double.infinity,
               padding: EdgeInsets.only(left: 32, right: 32),
-              color: getActivityColor(activityItem.type),
+              color: _mainColor,
               child: Stack(
                 children: <Widget>[
-                  getBackground(activityItem.type),
+                  getBackground(widget.activityItem.type),
                   Column(
                     children: <Widget>[
                       _buildTitle(),
@@ -218,7 +291,7 @@ class _RecordingActivityState extends State<RecordingActivity> {
       alignment: Alignment.topLeft,
       padding: EdgeInsets.only(top: 40),
       child: Text(
-        _recordingType,
+        widget.title,
         style: TextStyle(
           fontSize: 28,
           fontWeight: FontWeight.bold,
@@ -230,27 +303,30 @@ class _RecordingActivityState extends State<RecordingActivity> {
 
   Widget _buildTarget() {
     return Offstage(
-      offstage: !this.isTargetChecked,
+      offstage: !widget.isTargetChecked,
       child: Container(
         alignment: Alignment.topLeft,
         padding: EdgeInsets.only(top: 10),
-        child: Row(
-          children: <Widget>[
-            Icon(
-              Icons.timer,
-              color: Colors.white,
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            Text(
-              '${S.of(context).activity_target} $_targetString',
-              style: TextStyle(
-                fontSize: 20,
+        child: ScaleTransition(
+          scale: Tween(begin: 1.0, end: 0.8).animate(_targetAnimController),
+          child: Row(
+            children: <Widget>[
+              Icon(
+                Icons.timer,
                 color: Colors.white,
               ),
-            ),
-          ],
+              SizedBox(
+                width: 10,
+              ),
+              Text(
+                '$_targetString ${S.of(context).activity_remain}',
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -373,14 +449,15 @@ class _RecordingActivityState extends State<RecordingActivity> {
 
   String _parseTargetTimeToString() {
     String targetTime = "";
-    if (isTargetChecked && activityItem != null) {
-      int targetInt = activityItem.target;
+    if (widget.isTargetChecked && widget.activityItem != null) {
+      int targetInt = widget.activityItem.target;
       int hour = (targetInt ~/ (60 * 60)).toInt();
       int min = ((targetInt - hour * 60 * 60) ~/ 60).toInt();
-      String hourString = hour > 0 ? hour.toString() + S.of(context).time_h : '';
-      String minString = min > 0 ? min.toString() + S.of(context).time_mins : '';
-      targetTime =
-          hourString.length > 0 ? hourString + ' ' + minString : minString;
+
+      String hourString = hour > 0 ? (hour < 10 ? '0$hour' : '$hour') : '00';
+      String minString = min > 0 ? (min < 10 ? '0$min' : '$min') : '00';
+
+      targetTime = hourString + ":" + minString;
     }
     return targetTime;
   }
@@ -411,7 +488,7 @@ class _RecordingActivityState extends State<RecordingActivity> {
   }
 
   Future<Null> _startRecord() async {
-    Map<String, String> map = {"title": _recordingType};
+    Map<String, String> map = {"title": widget.title};
     await recordPlugin.invokeMethod('startRecord', map);
   }
 
@@ -425,6 +502,10 @@ class _RecordingActivityState extends State<RecordingActivity> {
 
   Future<Null> _continueRecord() async {
     await recordPlugin.invokeMethod('continueRecord');
+  }
+
+  Future<Null> _playVibrate() async {
+    await recordPlugin.invokeMethod('_playVibrate');
   }
 
   Future<Null> _hasLightSensor() async {
@@ -445,32 +526,47 @@ class _RecordingActivityState extends State<RecordingActivity> {
 
     if ((gl202020 == null || gl202020) &&
         _counterM != 0 &&
-        _counterM % 20 == 0 &&
+        _counterM == (20 * _show202020Counter) &&
         !_isDialogShowing) {
       _show20Dialog();
     }
 
-    if (isTargetChecked && activityItem != null) {
+    if (widget.isTargetChecked &&
+        widget.activityItem != null &&
+        !_timesUpWarned) {
       int targetInt =
-          activityItem.target - (_counterM * 60 + _counterH * 60 * 60);
+          widget.activityItem.target - (_counterM * 60 + _counterH * 60 * 60);
       targetInt = targetInt < 0 ? 0 : targetInt;
       int hour = (targetInt ~/ (60 * 60)).toInt();
       int min = ((targetInt - hour * 60 * 60) ~/ 60).toInt();
-      String hourString = hour > 0 ? hour.toString() + S.of(context).time_h : '';
-      String minString = min > 0 ? min.toString() + S.of(context).time_mins : '';
-      _targetString =
-          hourString.length > 0 ? hourString + ' ' + minString : minString;
-    }
 
-    setState(() {
-      _sec = _counterS < 10 ? '0$_counterS' : '$_counterS';
-      _mins = _counterM < 10 ? '0$_counterM' : '$_counterM';
-      _hour = _counterH < 10 ? '0$_counterH' : '$_counterH';
-    });
+      String hourString = hour > 0 ? (hour < 10 ? '0$hour' : '$hour') : '00';
+      String minString = min > 0 ? (min < 10 ? '0$min' : '$min') : '00';
+
+      if (hour <= 0 && min <= 0) {
+        _targetAnimController.forward();
+        _timesUpWarned = true;
+        if (_targetTimesUp != null) {
+          _playLocal(_targetTimesUp);
+        }
+        _playVibrate();
+      }
+
+      _targetString = hourString + ":" + minString;
+    }
+    _sec = _counterS < 10 ? '0$_counterS' : '$_counterS';
+    _mins = _counterM < 10 ? '0$_counterM' : '$_counterM';
+    _hour = _counterH < 10 ? '0$_counterH' : '$_counterH';
+    setState(() {});
   }
 
   _show20Dialog() {
     _isDialogShowing = true;
+    _show202020Counter++;
+    if (_warning20Audio != null) {
+      _playLocal(_warning20Audio);
+    }
+    _playVibrate();
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -488,7 +584,7 @@ class _RecordingActivityState extends State<RecordingActivity> {
 
   _updateData() async {
     ActivityItem activityItem =
-        await DatabaseHelper.internal().getActivity(this.activityItem.id);
+        await DatabaseHelper.internal().getActivity(widget.activityItem.id);
     int totalTime = _counterS + _counterM * 60 + _counterH * 60 * 60;
     activityItem.actual = totalTime;
     await DatabaseHelper.internal().updateActivity(activityItem);
@@ -514,7 +610,9 @@ class _RecordingActivityState extends State<RecordingActivity> {
 
   _updateLightSensor() {
     _seriesList = _createLightData();
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   List<charts.Series<LightConditionChart, int>> _createLightData() {

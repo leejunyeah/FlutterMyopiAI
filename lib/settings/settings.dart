@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_myopia_ai/chart/activity_chart.dart';
 import 'package:flutter_myopia_ai/data/activity_item.dart';
 import 'package:flutter_myopia_ai/data/gl_data.dart';
+import 'package:flutter_myopia_ai/generated/i18n.dart';
 import 'package:flutter_myopia_ai/home/edit_myopia.dart';
 import 'package:flutter_myopia_ai/home/result_myopia.dart';
+import 'package:flutter_myopia_ai/settings/about_us.dart';
+import 'package:flutter_myopia_ai/settings/dialog_content_20_intro.dart';
 import 'package:flutter_myopia_ai/util/myopia_const.dart';
+import 'package:package_info/package_info.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -13,6 +19,10 @@ class Settings extends StatefulWidget {
 
 class SettingsState extends State<Settings> {
   bool _is20Checked = true;
+  bool _isDialogShowing = false;
+
+  static const settingsPlugin =
+      const MethodChannel('com.myopia.flutter_myopia_ai/settings');
 
   @override
   void initState() {
@@ -24,7 +34,7 @@ class SettingsState extends State<Settings> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text("Settings"),
+        title: new Text(S.of(context).settings_title),
         backgroundColor: COLOR_MAIN_GREEN,
       ),
       body: _buildSettingsList(),
@@ -62,7 +72,7 @@ class SettingsState extends State<Settings> {
             SizedBox(
               width: 16,
             ),
-            _buildItemTitle('My vision status'),
+            _buildItemTitle(S.of(context).settings_vision_status),
           ],
         ),
       ),
@@ -81,14 +91,14 @@ class SettingsState extends State<Settings> {
             SizedBox(
               width: 16,
             ),
-            _buildItemTitle('Search myopia level'),
+            _buildItemTitle(S.of(context).settings_myopia_level),
           ],
         ),
       ),
       onTap: () => Navigator.push(
-            context,
-            new MaterialPageRoute(builder: (context) => new EditMyopia()),
-          ),
+        context,
+        new MaterialPageRoute(builder: (context) => new EditMyopia()),
+      ),
     );
   }
 
@@ -103,45 +113,65 @@ class SettingsState extends State<Settings> {
             SizedBox(
               width: 16,
             ),
-            _buildItemTitle('Statistic'),
+            _buildItemTitle(S.of(context).settings_statistics),
           ],
         ),
       ),
       onTap: () => Navigator.push(
-            context,
-            new MaterialPageRoute(
-              builder: (context) => new ActivityChartWidget(
-                    itemType: ActivityItem.TYPE_NONE,
-                  ),
-            ),
+        context,
+        new MaterialPageRoute(
+          builder: (context) => new ActivityChartWidget(
+            itemType: ActivityItem.TYPE_NONE,
           ),
+        ),
+      ),
     );
   }
 
   Widget _202020() {
-    return InkWell(
-      child: Container(
-        padding: EdgeInsets.only(left: 16, right: 16),
-        height: 68,
-        child: Row(
-          children: <Widget>[
-            ic202020,
-            SizedBox(
-              width: 16,
+    return Container(
+      padding: EdgeInsets.only(left: 16, right: 16),
+      height: 68,
+      child: Row(
+        children: <Widget>[
+          ic202020,
+          SizedBox(
+            width: 16,
+          ),
+          _buildItemTitle('20/20/20'),
+          InkWell(
+            child: Container(
+              padding: EdgeInsets.only(left: 8, right: 8),
+              child: Icon(
+                Icons.info,
+                size: 18,
+                color: Color(0x0F000000),
+              ),
             ),
-            Expanded(
-              flex: 1,
-              child: _buildItemTitle('20/20/20'),
+            onTap: () => _show20Dialog(),
+          ),
+          Expanded(
+            flex: 1,
+            child: Container(),
+          ),
+          Container(
+            width: 1,
+            height: 52,
+            color: Color(0x0F000000),
+          ),
+          InkWell(
+            child: Container(
+              padding: EdgeInsets.only(left: 16),
+              child: Switch(
+                value: _is20Checked,
+                onChanged: (boolValue) => _on20Changed(),
+                activeColor: COLOR_MAIN_GREEN,
+              ),
             ),
-            Switch(
-              value: _is20Checked,
-              onChanged: (boolValue) => _on20Changed(),
-              activeColor: COLOR_MAIN_GREEN,
-            ),
-          ],
-        ),
+            onTap: _on20Changed,
+          ),
+        ],
       ),
-      onTap: _on20Changed,
     );
   }
 
@@ -164,11 +194,13 @@ class SettingsState extends State<Settings> {
             SizedBox(
               width: 16,
             ),
-            _buildItemTitle('Feedback'),
+            _buildItemTitle(S.of(context).settings_feedback),
           ],
         ),
       ),
-      onTap: () => {},
+      onTap: () {
+        _handleFeedback();
+      },
     );
   }
 
@@ -183,11 +215,14 @@ class SettingsState extends State<Settings> {
             SizedBox(
               width: 16,
             ),
-            _buildItemTitle('About us'),
+            _buildItemTitle(S.of(context).settings_about_us),
           ],
         ),
       ),
-      onTap: () => {},
+      onTap: () => Navigator.push(
+        context,
+        new MaterialPageRoute(builder: (context) => new AboutUs()),
+      ),
     );
   }
 
@@ -202,11 +237,13 @@ class SettingsState extends State<Settings> {
             SizedBox(
               width: 16,
             ),
-            _buildItemTitle('Rate us'),
+            _buildItemTitle(S.of(context).settings_rate_us),
           ],
         ),
       ),
-      onTap: () => {},
+      onTap: () {
+        _rateUs();
+      },
     );
   }
 
@@ -242,5 +279,32 @@ class SettingsState extends State<Settings> {
         new MaterialPageRoute(builder: (context) => new ResultMyopia()),
       );
     }
+  }
+
+  _show20Dialog() {
+    if (!_isDialogShowing) {
+      _isDialogShowing = true;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return DialogContent(
+            onClosed: () => _isDialogShowing = false,
+          );
+        },
+      );
+    }
+  }
+
+  _handleFeedback() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    String version = packageInfo.version;
+    String mail =
+        'mailto:myopiai.tech@gmail.com?subject=[Version: $version]MyopiAI Feedback';
+    launch(mail);
+  }
+
+  Future<Null> _rateUs() async {
+    await settingsPlugin.invokeMethod('rateUs');
   }
 }

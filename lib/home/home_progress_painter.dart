@@ -1,56 +1,92 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_myopia_ai/data/SortActivityItem.dart';
 import 'package:flutter_myopia_ai/data/activity_item.dart';
 import 'package:flutter_myopia_ai/util/myopia_const.dart';
 
 class HomeProgressPainter extends CustomPainter {
-  final List<ActivityItem> activityList;
+  final List<SortActivityItem> sortedDataList;
+  final List<Color> colorList;
   final int indoorOutdoorType;
   final bool forTotal;
   List<ProgressItem> _dataList;
   int _totalValue;
 
   HomeProgressPainter(
-      {this.activityList, this.indoorOutdoorType, this.forTotal = false}) {
+      {this.sortedDataList, this.colorList, this.indoorOutdoorType, this.forTotal = false}) {
     _dataList = new List();
     _totalValue = 0;
-    if (activityList != null) {
-      for (ActivityItem item in this.activityList) {
-        if (item == null) continue;
-        if (!forTotal) {
-          if (item.type & indoorOutdoorType == 0) continue;
-        }
-        if (item.actual < 60) continue;
-        ProgressItem pItem;
-        for (ProgressItem i in this._dataList) {
-          if (forTotal) {
-            if (i.type & item.type != 0) {
-              pItem = i;
+    if (sortedDataList != null) {
+      if (forTotal) {
+        for (SortActivityItem item in sortedDataList) {
+          if (item == null) continue;
+          if (item.totalTime < 60) continue;
+          bool sortedIndoor = item.type & ActivityItem.TYPE_INDOOR != 0;
+          ProgressItem pItem = _dataList.firstWhere((element) {
+            if (sortedIndoor) {
+              return element.type == ActivityItem.TYPE_INDOOR;
+            } else {
+              return element.type == ActivityItem.TYPE_OUTDOOR;
             }
+          }, orElse: () => null);
+          if (pItem == null) {
+            ProgressItem pItem = new ProgressItem();
+            pItem.type = sortedIndoor
+                ? ActivityItem.TYPE_INDOOR
+                : ActivityItem.TYPE_OUTDOOR;
+            pItem.color = getActivityColor((sortedIndoor
+                ? ActivityItem.TYPE_INDOOR
+                : ActivityItem.TYPE_OUTDOOR));
+            pItem.value = item.totalTime;
+            pItem.customType = 0;
+            _dataList.add(pItem);
           } else {
-            if (i.type == item.type) {
-              pItem = i;
-            }
+            pItem.value += item.totalTime;
           }
         }
-        if (pItem == null) {
-          pItem = new ProgressItem();
-          pItem.type = forTotal
-              ? ((item.type & ActivityItem.TYPE_INDOOR != 0)
-                  ? ActivityItem.TYPE_INDOOR
-                  : ActivityItem.TYPE_OUTDOOR)
-              : item.type;
-          pItem.color = getActivityColor(forTotal
-              ? ((item.type & ActivityItem.TYPE_INDOOR != 0)
-                  ? ActivityItem.TYPE_INDOOR
-                  : ActivityItem.TYPE_OUTDOOR)
-              : item.type);
-          pItem.value = item.actual;
-          _dataList.add(pItem);
-        } else {
-          pItem.value += item.actual;
+        _dataList.sort((left, right) => left.type.compareTo(right.type));
+      } else {
+        List<ProgressItem> tempList = [];
+        int index = 0;
+        for (SortActivityItem item in sortedDataList) {
+          if (item == null) continue;
+          if (item.type & indoorOutdoorType == 0) continue;
+          if (item.totalTime < 60) continue;
+          Color color;
+          if (colorList != null && index < colorList.length) {
+            color = colorList[index];
+          } else {
+            color = COLOR_NONE;
+          }
+          ProgressItem pItem = new ProgressItem();
+          pItem.type = item.type;
+          pItem.color = color;
+          pItem.value = item.totalTime;
+          pItem.customType = item.customType;
+          tempList.add(pItem);
+          index++;
         }
+        if (tempList.length > MAX_DETAIL_COUNT) {
+          _dataList.addAll(tempList.sublist(0, MAX_DETAIL_COUNT));
+          ProgressItem otherTotal = new ProgressItem();
+          otherTotal.type = ActivityItem.TYPE_OTHER_TOTAL | indoorOutdoorType;
+          otherTotal.customType = 0;
+          otherTotal.value = 0;
+          otherTotal.color = getActivityColor(otherTotal.type, index: -1);
+          for (int i = MAX_DETAIL_COUNT; i < tempList.length; i++) {
+            if (tempList[i].type & indoorOutdoorType == 0) continue;
+            otherTotal.value += tempList[i].value;
+          }
+          if (otherTotal.value > 0) {
+            _dataList.add(otherTotal);
+          }
+        } else {
+          _dataList.addAll(tempList);
+        }
+
+
       }
     }
+
     for (ProgressItem item in this._dataList) {
       _totalValue += item.value;
     }
@@ -195,6 +231,7 @@ class HomeProgressPainter extends CustomPainter {
 
 class ProgressItem {
   int type;
+  int customType;
   Color color;
   double startX;
   double endX;

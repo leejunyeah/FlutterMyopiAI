@@ -80,8 +80,10 @@ class LinePainter {
           paint.strokeCap = StrokeCap.round;
         }
 
+        // begin modify by junye.li
         _drawSmoothLine(canvas, paint, points);
 //        _drawSolidLine(canvas, paint, points);
+        // end modify by junye.li
       } else {
         _drawDashedLine(canvas, paint, points, dashPattern);
       }

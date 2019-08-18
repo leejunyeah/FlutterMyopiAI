@@ -6,15 +6,20 @@ import '../generated/i18n.dart';
 class DialogLightWarning extends StatefulWidget {
 
   final Function onConfirm;
+  final Function onNotRemind;
 
-  DialogLightWarning({this.onConfirm});
+  DialogLightWarning({@required this.onConfirm, @required this.onNotRemind});
 
   @override
   State<StatefulWidget> createState() => _DialogLightWarning();
-
 }
 
 class _DialogLightWarning extends State<DialogLightWarning> {
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,12 +28,13 @@ class _DialogLightWarning extends State<DialogLightWarning> {
       child: Center(
         child: SizedBox(
           width: 280,
-          height: 170,
+          height: 240,
           child: Card(
             elevation: 12,
             shape: CARD_SHAPE,
             child: Container(
-              padding: EdgeInsets.only(left: 20, top: 20, right: 20, bottom: 10),
+              padding:
+                  EdgeInsets.only(left: 20, top: 20, right: 20, bottom: 10),
               child: Column(
                 children: <Widget>[
                   Container(
@@ -44,7 +50,9 @@ class _DialogLightWarning extends State<DialogLightWarning> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 20,),
+                  SizedBox(
+                    height: 20,
+                  ),
                   Container(
                     width: double.infinity,
                     alignment: Alignment.topCenter,
@@ -61,27 +69,45 @@ class _DialogLightWarning extends State<DialogLightWarning> {
                     flex: 1,
                     child: Container(),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Expanded(
-                        flex: 1,
-                        child: Container(
-                          width: double.infinity,
-                          alignment: Alignment.center,
-                          child: FlatButton(
-                            onPressed: () => _handleConfirm(),
-                            child: Text(
-                              //'OK',
-                              S.of(context).ok,
-                              style:
-                              TextStyle(color: Color(0xE2F82E47), fontSize: 18),
-                            ),
-                          ),
-                        ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 12, right: 12),
+                    child: Divider(
+                      height: 1,
+                      color: Color(0x0F000000),
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    child: FlatButton(
+                      onPressed: () => _handleConfirm(),
+                      child: Text(
+                        //'OK',
+                        S.of(context).ok,
+                        style: TextStyle(
+                            color: RECORDING_DIALOG_BUTTON, fontSize: 14),
                       ),
-
-                    ],
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 12, right: 12),
+                    child: Divider(
+                      height: 1,
+                      color: Color(0x0F000000),
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    child: FlatButton(
+                      onPressed: () => _handleNotRemind(),
+                      child: Text(
+                        'DON\'T SHOW AGAIN',
+                        style: TextStyle(
+                            color: RECORDING_DIALOG_BUTTON,
+                            fontSize: 14),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -94,6 +120,11 @@ class _DialogLightWarning extends State<DialogLightWarning> {
 
   _handleConfirm() {
     widget.onConfirm();
+    Navigator.pop(context);
+  }
+
+  _handleNotRemind() {
+    widget.onNotRemind();
     Navigator.pop(context);
   }
 }

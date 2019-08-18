@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_myopia_ai/data/SortActivityItem.dart';
 import 'package:flutter_myopia_ai/data/activity_item.dart';
+import 'package:flutter_myopia_ai/data/custom_type.dart';
 import 'package:flutter_myopia_ai/data/database_helper.dart';
 
 import 'package:flutter_myopia_ai/data/gl_data.dart';
-import 'package:flutter_myopia_ai/exercise/eye_exercise.dart';
+import 'package:flutter_myopia_ai/exercise/start_eye_exercise.dart';
 import 'package:flutter_myopia_ai/home/edit_myopia.dart';
 import 'package:flutter_myopia_ai/home/home_total_progress.dart';
 import 'package:flutter_myopia_ai/home/result_myopia.dart';
 import 'package:flutter_myopia_ai/util/myopia_const.dart';
-import 'package:flutter_myopia_ai/home/home_activity_progress.dart';
-import 'package:flutter_myopia_ai/chart/activity_chart.dart';
 import 'package:flutter_myopia_ai/activity/start_activity.dart';
 
 import '../generated/i18n.dart';
 
 class Home extends StatefulWidget {
+
+  final TabController tabController;
+
+  Home({this.tabController});
+
   @override
   HomeState createState() => new HomeState();
 }
@@ -27,6 +32,10 @@ class HomeState extends State<Home> {
   int _totalMin = 0;
 
   List<ActivityItem> _activityList;
+  List<SortActivityItem> _dataList;
+  List<Color> _indoorColorList;
+  List<Color> _outdoorColorList;
+  Map<int, CustomType> _customList;
 
   @override
   void initState() {
@@ -71,17 +80,25 @@ class HomeState extends State<Home> {
                     ],
                   ),
                   HomeTotalProgress(
-                    activityList: _activityList,
+                    dataList: _dataList,
+                    indoorColorList: _indoorColorList,
+                    outdoorColorList: _outdoorColorList,
+                    customList: _customList,
                   ),
                 ],
               ),
-              onPressed: () => Navigator.push(
-                context,
-                new MaterialPageRoute(
-                    builder: (context) => new ActivityChartWidget(
-                          itemType: ActivityItem.TYPE_NONE,
-                        )),
-              ),
+              onPressed: () {
+                if (widget.tabController != null) {
+                  widget.tabController.animateTo(1);
+                }
+              }
+//            () => Navigator.push(
+//                context,
+//                new MaterialPageRoute(
+//                    builder: (context) => new ActivityChartWidget(
+//                          itemType: ActivityItem.TYPE_NONE,
+//                        )),
+//              ),
             ),
           ),
           new Padding(
@@ -133,8 +150,9 @@ class HomeState extends State<Home> {
               onPressed: () => _handleMyopia(),
             ),
           ),
-          new Padding(
+          Container(
             padding: const EdgeInsets.only(left: 16.0, right: 16, bottom: 16),
+            alignment: Alignment.center,
             child: new Row(
               children: <Widget>[
                 Expanded(
@@ -210,7 +228,7 @@ class HomeState extends State<Home> {
                       onPressed: () => Navigator.push(
                         context,
                         new MaterialPageRoute(
-                            builder: (context) => new EyeExercise()),
+                            builder: (context) => new StartEyeExercise()),
                       ),
                     ),
                   ),
@@ -299,7 +317,7 @@ class HomeState extends State<Home> {
 
     List<ActivityItem> activities =
         await DatabaseHelper.internal().selectActivities();
-    List<ActivityItem> tempList = new List();
+    _activityList = [];
     DateTime now = DateTime.now();
     for (ActivityItem item in activities) {
       int timeInt = item.time;
@@ -307,56 +325,68 @@ class HomeState extends State<Home> {
       if (now.year == time.year &&
           now.month == time.month &&
           now.day == time.day) {
-        tempList.add(item);
+        _activityList.add(item);
       }
     }
 
-    int readingTime = 0;
-    int computerTime = 0;
-    int tvTime = 0;
-    int phoneTime = 0;
-    int otherTime = 0;
-    int sportsTime = 0;
-    int hikeTime = 0;
-    int swimTime = 0;
-
-    for (ActivityItem item in tempList) {
-      if (item.type & ActivityItem.TYPE_READING != 0) {
-        readingTime += ((item.actual ~/ 60) * 60);
-      } else if (item.type & ActivityItem.TYPE_TV != 0) {
-        tvTime += ((item.actual ~/ 60) * 60);
-      } else if (item.type & ActivityItem.TYPE_COMPUTER != 0) {
-        computerTime += ((item.actual ~/ 60) * 60);
-      } else if (item.type & ActivityItem.TYPE_PHONE != 0) {
-        phoneTime += ((item.actual ~/ 60) * 60);
-      } else if (item.type & ActivityItem.TYPE_SPORTS != 0) {
-        sportsTime += ((item.actual ~/ 60) * 60);
-      } else if (item.type & ActivityItem.TYPE_HIKE != 0) {
-        hikeTime += ((item.actual ~/ 60) * 60);
-      } else if (item.type & ActivityItem.TYPE_SWIM != 0) {
-        swimTime += ((item.actual ~/ 60) * 60);
-      } else if (item.type & ActivityItem.TYPE_CUSTOM != 0) {
-        otherTime += ((item.actual ~/ 60) * 60);
+    _customList = new Map();
+    List<CustomType> customList =
+        await DatabaseHelper.internal().selectCustomList();
+    for (CustomType customType in customList) {
+      if (!_customList.containsKey(customType)) {
+        _customList[customType.id] = customType;
       }
     }
 
-    int total = readingTime +
-        tvTime +
-        computerTime +
-        phoneTime +
-        otherTime +
-        sportsTime +
-        sportsTime +
-        hikeTime +
-        swimTime;
-    int hour = (total ~/ (60 * 60)).toInt();
-    int min = ((total - hour * 60 * 60) ~/ 60).toInt();
+    int total = 0;
+    _dataList = [];
+    for (ActivityItem item in _activityList) {
+      if (item.actual < 60) continue;
+      SortActivityItem sortActivityItem = _dataList.firstWhere(
+              (element) => (element.type == item.type &&
+              element.customType == item.customType),
+          orElse: () => null);
+      if (sortActivityItem == null) {
+        sortActivityItem = new SortActivityItem();
+        sortActivityItem.type = item.type;
+        sortActivityItem.customType = item.customType;
+        sortActivityItem.totalTime = item.actual;
+        total += item.actual;
+        _dataList.add(sortActivityItem);
+      } else {
+        total += item.actual;
+        sortActivityItem.totalTime += item.actual;
+      }
+    }
+    _dataList
+        .sort((left, right) => right.totalTime.compareTo(left.totalTime));
 
-    setState(() {
-      _activityList = tempList;
-      _totalHour = hour;
-      _totalMin = min;
+    _indoorColorList = [];
+    _outdoorColorList = [];
+    int indoorIndex = 0;
+    int outdoorIndex = 0;
+    _dataList.forEach((element) {
+      if (element.type & ActivityItem.TYPE_INDOOR != 0) {
+        if (indoorIndex <= MAX_DETAIL_COUNT) {
+          _indoorColorList.add(
+              getActivityColor(element.type, index: indoorIndex));
+          indoorIndex++;
+        }
+      } else {
+        if (outdoorIndex <= MAX_DETAIL_COUNT) {
+          _outdoorColorList.add(
+              getActivityColor(element.type, index: outdoorIndex));
+          outdoorIndex++;
+        }
+      }
     });
+
+    _totalHour = total ~/ (60 * 60);
+    _totalMin = (total - _totalHour * 60 * 60) ~/ 60;
+
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   _initResult() {
@@ -369,7 +399,7 @@ class HomeState extends State<Home> {
     } else if (glResult == LEVEL_NORMAL) {
       _myopiaResult = S.of(context).result_normal;
     } else {
-      _myopiaResult = 'Setup';
+      _myopiaResult = S.of(context).result_setup;
     }
     _tips = _getTips();
   }
@@ -384,7 +414,6 @@ class HomeState extends State<Home> {
                 )),
       );
       if (result == HOME_TO_EDIT) {
-//        _initResult();
         setState(() {});
       }
     } else {
@@ -396,7 +425,6 @@ class HomeState extends State<Home> {
                 )),
       );
       if (result == HOME_TO_RESULT) {
-//        _initResult();
         setState(() {});
       }
     }

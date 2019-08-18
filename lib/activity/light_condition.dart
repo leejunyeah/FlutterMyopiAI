@@ -37,6 +37,7 @@ class _LightConditionWidgetState extends State<LightConditionWidget> {
   }
 
   Widget _buildWidget() {
+    int currentLux = widget.seriesList.last.data.last.lightValue;
     return Column(
       children: <Widget>[
         InkWell(
@@ -120,6 +121,19 @@ class _LightConditionWidgetState extends State<LightConditionWidget> {
                             TextStyle(fontSize: 12, color: Color(0x33000000)),
                       ),
                     ),
+                    Positioned(
+                      left: 35,
+                      top: 70,
+                      child: Text(
+                        //'Time',
+                        '${S.of(context).recording_current_light}$currentLux',
+                        style: TextStyle(
+                            fontSize: 10,
+                            color: currentLux < 20
+                                ? INDOOR_COLOR_5
+                                : Color(0x33000000)),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -143,23 +157,25 @@ class _LightConditionWidgetState extends State<LightConditionWidget> {
   }
 
   Widget _buildLineChart() {
-    return new charts.LineChart(widget.seriesList,
-        animate: animate,
-        primaryMeasureAxis:
-            new charts.NumericAxisSpec(renderSpec: new charts.NoneRenderSpec()),
-        domainAxis: new charts.NumericAxisSpec(
-          // Make sure that we draw the domain axis line.
-          showAxisLine: false,
-          // But don't draw anything else.
-          renderSpec: new charts.NoneRenderSpec(),
-        ),
-        behaviors: [
-          new charts.RangeAnnotation([
-            new charts.LineAnnotationSegment(
-                50, charts.RangeAnnotationAxisType.measure,
-                color: charts.Color(r: 0x00, g: 0x00, b: 0x00, a: 0x19)),
-          ]),
-        ]);
+    return new charts.LineChart(
+      widget.seriesList,
+      animate: animate,
+      primaryMeasureAxis: new charts.NumericAxisSpec(
+          renderSpec: new charts.NoneRenderSpec(), showAxisLine: true),
+      domainAxis: new charts.NumericAxisSpec(
+        // Make sure that we draw the domain axis line.
+        showAxisLine: true,
+        // But don't draw anything else.
+        renderSpec: new charts.NoneRenderSpec(),
+      ),
+//        behaviors: [
+//          new charts.RangeAnnotation([
+//            new charts.LineAnnotationSegment(
+//                50, charts.RangeAnnotationAxisType.measure,
+//                color: charts.Color(r: 0x00, g: 0x00, b: 0x00, a: 0x19)),
+//          ]),
+//        ]
+    );
   }
 }
 

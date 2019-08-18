@@ -91,7 +91,7 @@ class _EditAxWidgetState extends State<EditAxWidget> {
                   children: <Widget>[
                     Icon(
                       Icons.brightness_1,
-                      color: COLOR_TV,
+                      color: INDOOR_COLOR_4,
                       size: 8,
                     ),
                     SizedBox(

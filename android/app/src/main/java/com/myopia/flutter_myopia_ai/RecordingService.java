@@ -5,8 +5,12 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Vibrator;
 
 import com.myopia.flutter_myopia_ai.notification.NotificationCompat;
 
@@ -19,6 +23,7 @@ public class RecordingService extends Service {
     public static final String ACTION_STOP = "myopia.stop.record.action";
     public static final String ACTION_END = "myopia.end.record.action";
     public static final String ACTION_END_NOTIFICATION = "myopia.end.notification.record.action";
+    public static final String ACTION_PLAY_VIBRATE = "myopia.play.vibrate";
     public static final String ACTION_CONTINUE = "myopia.continue.record.action";
 
     private TimerTask mTimerTask;
@@ -63,6 +68,8 @@ public class RecordingService extends Service {
             stopSelf();
         } else if (ACTION_CONTINUE.equals(intent.getAction())) {
             continueTimer();
+        } else if (ACTION_PLAY_VIBRATE.equals(intent.getAction())) {
+            _playVibrate();
         }
         return super.onStartCommand(intent, flags, startId);
     }
@@ -72,6 +79,17 @@ public class RecordingService extends Service {
         super.onDestroy();
         endTimer();
         LightSensorManager.getInstance(this).stop();
+    }
+
+    private void _playVibrate() {
+//        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+//        Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+//        r.play();
+
+        Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        if (vibrator != null) {
+            vibrator.vibrate(1000);
+        }
     }
 
     private void endTimer() {

@@ -36,7 +36,7 @@ class MainPageState extends State<MainPage>
       body: new TabBarView(
         controller: controller,
         children: [
-          new Home(),
+          new Home(tabController: controller,),
           new Activity(),
           new Settings(),
         ],

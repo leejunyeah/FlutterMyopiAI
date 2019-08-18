@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="360px" height="360px" viewBox="0 0 360 360" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 52.2 (67145) - http://www.bohemiancoding.com/sketch -->
-    <title>background_Reading</title>
+<svg width="240px" height="185px" viewBox="0 0 240 185" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 56.3 (81716) - https://sketch.com -->
+    <title>round-chrome_reader_mode-24px</title>
     <desc>Created with Sketch.</desc>
-    <g id="background_Reading" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="gt_bakerhill_1_dribbble" fill-rule="nonzero">
-            <rect id="Mask" fill="#13D077" x="0" y="0" width="360" height="360"></rect>
-            <g id="round-chrome_reader_mode-24px" opacity="0.149999991" transform="translate(114.000000, 28.000000)" fill="#FFFFFF">
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.149999991">
+        <g id="background_reading" transform="translate(-114.000000, -28.000000)" fill="#FFFFFF" fill-rule="nonzero">
+            <g id="round-chrome_reader_mode-24px" transform="translate(114.000000, 28.000000)">
                 <path d="M217.5,0.333333333 C174.166667,0.333333333 141.666667,0.333333333 120,0.333333333 C98.3333333,0.333333333 65.8333333,0.333333333 22.5,0.333333333 C10.5833333,0.333333333 0.833333333,10.0833333 0.833333333,22 L0.833333333,162.833333 C0.833333333,174.75 10.5833333,184.5 22.5,184.5 L217.5,184.5 C229.416667,184.5 239.166667,174.75 239.166667,162.833333 L239.166667,22 C239.166667,10.0833333 229.416667,0.333333333 217.5,0.333333333 Z M217.5,152 C217.5,157.958333 212.625,162.833333 206.666667,162.833333 L130.833333,162.833333 L130.833333,22 L206.666667,22 C212.625,22 217.5,26.875 217.5,32.8333333 L217.5,152 Z M22.5,152 L22.5,32.8333333 C22.5,26.875 27.375,22 33.3333333,22 L109.166667,22 L109.166667,162.833333 L33.3333333,162.833333 C27.375,162.833333 22.5,157.958333 22.5,152 Z" id="Shape"></path>
                 <path d="M152.5,111.375 C148.012686,111.375 144.375,107.737314 144.375,103.25 C144.375,98.7626864 148.012686,95.125 152.5,95.125 L195.833333,95.125 C200.320647,95.125 203.958333,98.7626864 203.958333,103.25 C203.958333,107.737314 200.320647,111.375 195.833333,111.375 L152.5,111.375 Z" id="Path-5"></path>
                 <path d="M152.5,78.875 C148.012686,78.875 144.375,75.2373136 144.375,70.75 C144.375,66.2626864 148.012686,62.625 152.5,62.625 L195.833333,62.625 C200.320647,62.625 203.958333,66.2626864 203.958333,70.75 C203.958333,75.2373136 200.320647,78.875 195.833333,78.875 L152.5,78.875 Z" id="Path-5"></path>

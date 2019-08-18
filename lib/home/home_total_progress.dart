@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_myopia_ai/data/SortActivityItem.dart';
 import 'package:flutter_myopia_ai/data/activity_item.dart';
+import 'package:flutter_myopia_ai/data/custom_type.dart';
 import 'package:flutter_myopia_ai/generated/i18n.dart';
 import 'package:flutter_myopia_ai/home/home_progress_painter.dart';
 import 'package:flutter_myopia_ai/util/myopia_const.dart';
 
 class HomeTotalProgress extends StatefulWidget {
-  final List<ActivityItem> activityList;
+  final List<SortActivityItem> dataList;
+  final List<Color> indoorColorList;
+  final List<Color> outdoorColorList;
+  final Map<int, CustomType> customList;
 
-  HomeTotalProgress({this.activityList});
+  HomeTotalProgress(
+      {this.dataList,
+      this.indoorColorList,
+      this.outdoorColorList,
+      this.customList});
 
   @override
   _HomeTotalProgressState createState() => new _HomeTotalProgressState();
@@ -32,10 +41,12 @@ class _HomeTotalProgressState extends State<HomeTotalProgress> {
   Widget build(BuildContext context) {
     _getActivityList();
     _indoorProgressPainter = HomeProgressPainter(
-        activityList: widget.activityList,
+        sortedDataList: widget.dataList,
+        colorList: widget.indoorColorList,
         indoorOutdoorType: ActivityItem.TYPE_INDOOR);
     _outdoorProgressPainter = HomeProgressPainter(
-        activityList: widget.activityList,
+        sortedDataList: widget.dataList,
+        colorList: widget.outdoorColorList,
         indoorOutdoorType: ActivityItem.TYPE_OUTDOOR);
     return _buildProgress();
   }
@@ -44,15 +55,18 @@ class _HomeTotalProgressState extends State<HomeTotalProgress> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
+        SizedBox(
+          height: 10,
+        ),
         Container(
-          height: 50,
+          height: 20,
           child: CustomPaint(
             size: Size(MediaQuery.of(context).size.width, 10),
-            painter: HomeProgressPainter(activityList: widget.activityList, indoorOutdoorType: 0, forTotal: true),
+            painter: HomeProgressPainter(
+                sortedDataList: widget.dataList,
+                indoorOutdoorType: 0,
+                forTotal: true),
           ),
-        ),
-        SizedBox(
-          height: 2,
         ),
         _buildNotes(),
         SizedBox(
@@ -62,16 +76,32 @@ class _HomeTotalProgressState extends State<HomeTotalProgress> {
           child: Container(
             padding: EdgeInsets.only(top: 5, bottom: 5),
             width: double.infinity,
-            alignment: Alignment.centerRight,
-            child: Text(
-              _isShowMore
-                  ? S.of(context).home_hide
-                  : S.of(context).home_show_more,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Color(0x44000000),
-                fontSize: 14,
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                Text(
+                  _isShowMore
+                      ? S.of(context).home_hide
+                      : S.of(context).home_show_more,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: COLOR_RESULT_HEADER,
+                    fontSize: 13,
+                  ),
+                ),
+                SizedBox(
+                  width: 14,
+                ),
+                _isShowMore
+                    ? Icon(
+                        Icons.keyboard_arrow_up,
+                        color: Color(0xFF979797),
+                      )
+                    : Icon(
+                        Icons.keyboard_arrow_down,
+                        color: Color(0xFF979797),
+                      )
+              ],
             ),
           ),
           onTap: () {
@@ -168,9 +198,19 @@ class _HomeTotalProgressState extends State<HomeTotalProgress> {
       ),
     );
     List<_DetailNode> noteList = [];
+//    int index = 0;
     for (ProgressItem progressItem in dataList) {
+//      index++;
+//      if (index > MAX_DETAIL_COUNT) break;
       String typeString =
           getShortActivityTypeString(context, progressItem.type);
+      if (progressItem.type & ActivityItem.TYPE_CUSTOM != 0) {
+        if (widget.customList.containsKey(progressItem.customType)) {
+          typeString = widget.customList[progressItem.customType].typeText;
+        }
+      } else if (progressItem.type & ActivityItem.TYPE_OTHER_TOTAL != 0) {
+        typeString = S.of(context).activity_others;
+      }
       String time = _parseTargetTimeToString(progressItem.value);
       String text = '$typeString $time';
       _DetailNode _detailNode = new _DetailNode();
@@ -178,10 +218,11 @@ class _HomeTotalProgressState extends State<HomeTotalProgress> {
       _detailNode.progressItem = progressItem;
       noteList.add(_detailNode);
     }
+
     if (noteList.isEmpty) {
       children.add(_buildNoneNote());
     } else {
-      children.add(_buildDetailNotes(noteList));
+      children.add(_buildDetailNotes(noteList, indoorOutdoorType));
     }
     return children;
   }
@@ -220,12 +261,14 @@ class _HomeTotalProgressState extends State<HomeTotalProgress> {
               Text(
                 S.of(context).activity_indoor,
                 style: TextStyle(
+                  fontSize: 12,
                   color: getActivityColor(ActivityItem.TYPE_INDOOR),
                 ),
               ),
               Text(
                 _parseTargetTimeToString(_indoor),
                 style: TextStyle(
+                  fontSize: 12,
                   color: getActivityColor(ActivityItem.TYPE_INDOOR),
                 ),
               ),
@@ -240,12 +283,14 @@ class _HomeTotalProgressState extends State<HomeTotalProgress> {
               Text(
                 S.of(context).activity_outdoor,
                 style: TextStyle(
+                  fontSize: 12,
                   color: getActivityColor(ActivityItem.TYPE_OUTDOOR),
                 ),
               ),
               Text(
                 _parseTargetTimeToString(_outdoor),
                 style: TextStyle(
+                  fontSize: 12,
                   color: getActivityColor(ActivityItem.TYPE_OUTDOOR),
                 ),
               ),
@@ -256,19 +301,42 @@ class _HomeTotalProgressState extends State<HomeTotalProgress> {
     );
   }
 
-  Widget _buildDetailNotes(List<_DetailNode> noteList) {
+  Widget _buildDetailNotes(List<_DetailNode> noteList, int indoorOutdoorType) {
     return Wrap(
       spacing: 8.0, // 主轴(水平)方向间距
       runSpacing: 4.0, // 纵轴（垂直）方向间距
-      children: getWidgetList(noteList),
+      children: getWidgetList(noteList, indoorOutdoorType),
     );
   }
 
-  List<Widget> getWidgetList(List<_DetailNode> noteList) {
-    return noteList.map((item) => _getItemContainer(item)).toList();
+  List<Widget> getWidgetList(
+      List<_DetailNode> noteList, int indoorOutdoorType) {
+    List<Widget> widgetList = [];
+    int index = 0;
+    for (_DetailNode node in noteList) {
+      Color color;
+      if (indoorOutdoorType == ActivityItem.TYPE_INDOOR) {
+        if (widget.indoorColorList != null &&
+            index < widget.indoorColorList.length) {
+          color = widget.indoorColorList[index];
+        } else {
+          color = COLOR_NONE;
+        }
+      } else {
+        if (widget.outdoorColorList != null &&
+            index < widget.outdoorColorList.length) {
+          color = widget.outdoorColorList[index];
+        } else {
+          color = COLOR_NONE;
+        }
+      }
+      widgetList.add(_getItemContainer(node, color));
+      index++;
+    }
+    return widgetList;
   }
 
-  Widget _getItemContainer(_DetailNode _detailNode) {
+  Widget _getItemContainer(_DetailNode _detailNode, Color color) {
     return Container(
       alignment: Alignment.centerLeft,
       width: 140,
@@ -277,7 +345,7 @@ class _HomeTotalProgressState extends State<HomeTotalProgress> {
         children: <Widget>[
           Icon(
             Icons.brightness_1,
-            color: getActivityColor(_detailNode.progressItem.type),
+            color: color,
             size: 8,
           ),
           SizedBox(
@@ -287,7 +355,7 @@ class _HomeTotalProgressState extends State<HomeTotalProgress> {
             _detailNode.text,
             style: TextStyle(
               fontSize: 14,
-              color: getActivityColor(_detailNode.progressItem.type),
+              color: color,
             ),
           ),
         ],
@@ -313,8 +381,7 @@ class _HomeTotalProgressState extends State<HomeTotalProgress> {
     return targetTime;
   }
 
-
-  _getActivityList() async {
+  _getActivityList() {
     _getActualTimeAndPercent();
   }
 
@@ -325,19 +392,18 @@ class _HomeTotalProgressState extends State<HomeTotalProgress> {
     _indoor = 0;
     _outdoor = 0;
 
-    if (widget.activityList != null) {
-      for (ActivityItem item in widget.activityList) {
+    if (widget.dataList != null) {
+      for (SortActivityItem item in widget.dataList) {
         if (item.type & ActivityItem.TYPE_INDOOR != 0) {
-          indoorTime += ((item.actual ~/ 60) * 60);
+          indoorTime += ((item.totalTime ~/ 60) * 60);
         } else if (item.type & ActivityItem.TYPE_OUTDOOR != 0) {
-          outdoorTime += ((item.actual ~/ 60) * 60);
+          outdoorTime += ((item.totalTime ~/ 60) * 60);
         }
       }
     }
 
     indoorTime = indoorTime < 60 ? 0 : indoorTime;
     outdoorTime = outdoorTime < 60 ? 0 : outdoorTime;
-
 
     setState(() {
       _indoor = indoorTime;

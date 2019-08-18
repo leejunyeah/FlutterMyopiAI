@@ -78,7 +78,7 @@ class _EditCylWidgetState extends State<EditCylWidget> {
                   children: <Widget>[
                     Icon(
                       Icons.brightness_1,
-                      color: COLOR_COMPUTER,
+                      color: INDOOR_COLOR_3,
                       size: 8,
                     ),
                     SizedBox(
@@ -115,7 +115,7 @@ class _EditCylWidgetState extends State<EditCylWidget> {
                               onPressed: () {
                                 _decrementLCounter();
                               },
-                              color: COLOR_COMPUTER,
+                              color: INDOOR_COLOR_3,
                               icon: Icon(
                                 Icons.remove,
                                 size: 20,
@@ -132,7 +132,7 @@ class _EditCylWidgetState extends State<EditCylWidget> {
                               onPressed: () {
                                 _incrementLCounter();
                               },
-                              color: COLOR_COMPUTER,
+                              color: INDOOR_COLOR_3,
                               icon: Icon(
                                 Icons.add,
                                 size: 20,
@@ -155,7 +155,7 @@ class _EditCylWidgetState extends State<EditCylWidget> {
                               onPressed: () {
                                 _decrementRCounter();
                               },
-                              color: COLOR_COMPUTER,
+                              color: INDOOR_COLOR_3,
                               icon: Icon(
                                 Icons.remove,
                                 size: 20,
@@ -172,7 +172,7 @@ class _EditCylWidgetState extends State<EditCylWidget> {
                               onPressed: () {
                                 _incrementRCounter();
                               },
-                              color: COLOR_COMPUTER,
+                              color: INDOOR_COLOR_3,
                               icon: Icon(
                                 Icons.add,
                                 size: 20,

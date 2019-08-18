@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 class S implements WidgetsLocalizations {
   const S();
 
+  static S current;
+
   static const GeneratedLocalizationsDelegate delegate =
     GeneratedLocalizationsDelegate();
 
@@ -20,40 +22,59 @@ class S implements WidgetsLocalizations {
   TextDirection get textDirection => TextDirection.ltr;
 
   String get activity_202020_msg => "Please take a break to look into the distance for 20 seconds at something 20 yards(18 meters) away";
+  String get activity_add_btn => "ADD";
+  String get activity_bike => "Biking";
+  String get activity_chart_total => "Total";
   String get activity_computer => "Computer";
   String get activity_customise => "Customise";
   String get activity_empty_custom => "Input your activity.";
   String get activity_exit_warning => "Do you want to end this activity?";
   String get activity_front_computer => "In front of computer";
-  String get activity_hike => "Hike";
+  String get activity_games => "Games";
+  String get activity_hike => "Hiking";
   String get activity_indoor => "Indoor";
+  String get activity_indoor_activity => "Indoor activity";
   String get activity_light_brightness => "Brightness";
   String get activity_light_condition => "Light condition";
-  String get activity_light_des => "Warning when brightness is not good enough for eye activities.";
+  String get activity_light_des => "Warning when brightness is not good enough for eye activities. LUX > 20 is recommended.";
   String get activity_light_time => "Time";
-  String get activity_light_warning => "Find more light! Don\\'t strain your eyes!";
+  String get activity_light_warning => "Find more light! Don't strain your eyes!";
+  String get activity_menu_add => "Add an activity";
+  String get activity_menu_start => "Start a new activity";
   String get activity_no_data => "No data today";
   String get activity_others => "Others";
   String get activity_outdoor => "Outdoor";
+  String get activity_outdoor_activity => "Outdoor activity";
   String get activity_phone => "Phone";
+  String get activity_playing_games => "Playing games";
   String get activity_reading => "Reading";
+  String get activity_remain => "Remaining";
+  String get activity_run => "Running";
   String get activity_short_tv => "TV";
-  String get activity_sports => "Sports";
-  String get activity_swim => "Swim";
+  String get activity_sports => "Sporting";
+  String get activity_swim => "Swimming";
   String get activity_target => "Target";
   String get activity_title => "Activity";
   String get activity_total => "Total";
   String get activity_tv => "Watching TV";
   String get activity_using_phone => "Using mobile phone";
+  String get add_new_activity => "Add an activity";
+  String get app_name => "MyopiAI";
   String get ax_warning => "AX value must be less than 180";
   String get cancel => "CANCEL";
   String get end => "END";
   String get eye_activity_time => "Eye Activity Time";
   String get eye_exercise => "Eye exercise";
+  String get eye_exercise_start_summary => "The traditional Chinese eye exercises of acupoints requires approximately 5 minutes to complete. It is effective in relieving eye strain and fatigue. It involves bilateral self-massage at selected acupoints.";
+  String get eye_exercise_start_title => "Eye Exercise I (Acupoint Massage)";
+  String get eye_exercise_step_1 => "1）knead Tianying(Ashi)point.";
+  String get eye_exercise_step_2 => "2）Press and squeeze Jingming(BL1).";
+  String get eye_exercise_step_3 => "3）Press and Knead Sibai(ST2).";
+  String get eye_exercise_step_4 => "4）Press Taiyang(Ex-HN5)and scrape Cuanzhu(BL2), Yuyao(EX-HN4), Sizhukong(TE23), Tongziliao(GB1), Chengqi(ST1).";
   String get high_des_diagnosis => "    You have high myopia (short-sightedness) in one or both eyes, and need visual correction in the form of eyewear, or contact lenses.\n\n    You are at relatively high risk of myopia-related eye complications. Have your eye health regularly tested (every 2 years) as eyesight and eye health can deteriorate without you noticing and also be affected by other medical conditions before they are diagnosed e.g. diabetes, or more regularly if advised by a healthcare professional.\n\n    Conditions to be aware of:\n\t\t\t\tPosterior Vitreous Detachment\n\t\t\t\tRetinal Detachment\n\t\t\t\tGlaucoma\n\t\t\t\tCataracts\n\n    Go see an eye care professional immediately if you experience any unusual, persistent visual disturbances e.g. floating stars, curtain being ‘drawn across’ visual field etc.";
   String get high_des_references => "    ABDEL-AAL, E.-S., AKHTAR, H., ZAHEER, K. & ALI, R. 2013. Dietary sources of lutein and zeaxanthin carotenoids and their role in eye health. Nutrients, 5, 1169-1185.\n\n    BLEHM, C., VISHNU, S., KHATTAK, A., MITRA, S. & YEE, R. W. 2005. Computer Vision Syndrome: A Review. Survey of Ophthalmology, 50, 253-262.\n\n    RNIB 2018. Myopia and pathological myopia.\n\n    ROBERTS, J. E. 2011. Ultraviolet radiation as a risk factor for cataract and macular degeneration. Eye & contact lens, 37, 246-249.";
   String get high_des_tips => "    Take regular breaks when using the computer or reading: remember the 20-20-20 rule. Look into the distance for 20 seconds at something 20 yards away (~18 meters) every 20 minutes.\n\n    Eat healthily! A balanced diet is good for eye health as it is for general health! Fruit, vegetables and oily fish are a great start.\n\n    Shield your eyes from excessively strong sun – a source of UVA and UVB radiation – with sunglasses. UVA/UVB light is risk factor for developing cataracts.";
-  String get home_activity_none => "nota activity";
+  String get home_activity_none => "no activity";
   String get home_hide => "HIDE";
   String get home_indoor_time => "Indoor activity time";
   String get home_outdoor_time => "Outdoor activity time";
@@ -71,6 +92,8 @@ class S implements WidgetsLocalizations {
   String get normal_des_tips => "    Take regular breaks when using the computer or reading: remember the 20-20-20 rule. Look into the distance for 20 seconds at something 20 yards away (~18 meters) every 20 minutes.\n\n    Eat healthily! A balanced diet is good for eye health as it is for general health! Fruit, vegetables and oily fish are a great start.\n\n    Shield your eyes from excessively strong sun – a source of UVA and UVB radiation – with sunglasses. UVA/UVB light is risk factor for developing cataracts.";
   String get ok => "OK";
   String get pd_warning => "PD value must be less than 100";
+  String get recording_current_light => "Current LUX: ";
+  String get recording_target_time_up => "times up";
   String get result_des_diagnosis => "DIAGNOSIS";
   String get result_des_ref => "REFERENCES";
   String get result_des_tips => "TIPS";
@@ -78,9 +101,20 @@ class S implements WidgetsLocalizations {
   String get result_mild => "Mild Myopia";
   String get result_moderate => "Moderate Myopia";
   String get result_normal => "Normal";
+  String get result_setup => "Setup";
   String get right => "RIGHT";
   String get s_continue => "CONTINUE";
+  String get settings_202020_msg => "To protect your eyes, after using eyes for 20 minutes, a popup will be shown to suggest you take a break to look into the distance for 20 seconds at something 20 yards(18 meters) away";
+  String get settings_about_us => "About us";
+  String get settings_feedback => "Feedback";
+  String get settings_myopia_level => "Search myopia level";
+  String get settings_rate_us => "Rate us";
+  String get settings_statistics => "Statistics";
+  String get settings_team_page => "Team homepage";
   String get settings_title => "Settings";
+  String get settings_update_check => "Check for update";
+  String get settings_version => "Version";
+  String get settings_vision_status => "My vision status";
   String get sph_warning => "You are entering a positive value, are you sure this is correct?";
   String get start => "START";
   String get start_new_activity => "Start a new activity";
@@ -212,16 +246,20 @@ class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {
     if (lang != null) {
       switch (lang) {
         case "zh_HK":
-          return SynchronousFuture<S>(const $zh_HK());
+          S.current = const $zh_HK();
+          return SynchronousFuture<S>(S.current);
         case "en":
-          return SynchronousFuture<S>(const $en());
+          S.current = const $en();
+          return SynchronousFuture<S>(S.current);
         case "zh_CN":
-          return SynchronousFuture<S>(const $zh_CN());
+          S.current = const $zh_CN();
+          return SynchronousFuture<S>(S.current);
         default:
           // NO-OP.
       }
     }
-    return SynchronousFuture<S>(const S());
+    S.current = const S();
+    return SynchronousFuture<S>(S.current);
   }
 
   @override

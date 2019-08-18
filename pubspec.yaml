@@ -11,7 +11,7 @@ description: A new Flutter application.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+2
+version: 1.0.0
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -38,6 +38,12 @@ dependencies:
   charts_flutter:
     path: ./charts_flutter
   sqflite: #^1.1.5
+  flutter_seekbar:
+    git: https://github.com/LiuC520/flutter_seekbar.git
+  audioplayers: #^0.13.1
+  url_launcher: #^5.0.3
+  get_it: #^1.0.3+2
+  package_info: #0.4.0+6
 
 dev_dependencies:
   flutter_test:
@@ -105,17 +111,44 @@ flutter:
     - assets/ic_computer.svg
     - assets/ic_watching_tv.svg
     - assets/ic_phone.svg
+    - assets/ic_game.svg
     - assets/ic_others.svg
+    - assets/ic_bike.svg
+    - assets/ic_hike.svg
+    - assets/ic_run.svg
+    - assets/ic_sports.svg
+    - assets/ic_swim.svg
+    - assets/ic_others_outdoor.svg
     - assets/background_reading.svg
     - assets/background_computer.svg
     - assets/background_phone.svg
     - assets/background_watching_tv.svg
+    - assets/background_game.svg
     - assets/background_others.svg
+    - assets/background_swim.svg
+    - assets/background_sports.svg
+    - assets/background_run.svg
+    - assets/background_bike.svg
+    - assets/background_hike.svg
+    - assets/background_others_outdoor.svg
+    - assets/eye_exercise_face_1.svg
+    - assets/eye_exercise_face_2.svg
     - assets/app_icon.svg
     - assets/eye_exercise_1.svg
     - assets/eye_exercise_2.svg
     - assets/eye_exercise_3.svg
     - assets/eye_exercise_4.svg
+    - assets/ic_logo.svg
     - images/img_20_20_20.png
     - images/2.0x/img_20_20_20.png
     - images/3.0x/img_20_20_20.png
+    - images/eye_exercise_face_1.png
+    - images/2.0x/eye_exercise_face_1.png
+    - images/3.0x/eye_exercise_face_1.png
+    - images/eye_exercise_face_2.png
+    - images/2.0x/eye_exercise_face_2.png
+    - images/3.0x/eye_exercise_face_2.png
+    - assets/eye_exercise_music.mp3
+    - assets/light_warning.mp3
+    - assets/20_warning.mp3
+    - assets/target_times_up.mp3
