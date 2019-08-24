@@ -21,6 +21,14 @@ class S implements WidgetsLocalizations {
   @override
   TextDirection get textDirection => TextDirection.ltr;
 
+  String get about_myopiai_1 => "MyopiAI is a smartphone application conceived and built to be part of a solution to the complex problem that is the myopia pandemic. By 2050, 5 billion people, that is half of the world’s population, will be myopic or ‘short-sighted’ and 1 billion of those people will suffer from high myopia which is a significant risk factor for potentially sight-threatening diseases such as glaucoma, retinal detachment and myopic macular degeneration.(1)\n";
+  String get about_myopiai_2 => "This smartphone app attempts to educate users about their own eye health through analysing their spectacles (glasses) or contact lens prescription. It also aims to tackle risk factors for myopia progression. Namely, behavioural risk factors, such as spending excessive time indoors, and not enough time outdoors in natural light. Through time tracking, users will be able to understand how much time they spend indoors and outdoors, increasing their time outdoors through gamification which current best evidence suggests could be helpful in slowing myopia progression.(2) The also encourages good near work habits, such as taking breaks and working in adequate lighting conditions. Important for both eye health and productivity.\n";
+  String get about_myopiai_3 => "This app also hopes to promote positive general health habits, such as spending more time doing outdoors doing physical activity/exercise, through its feature set. It is hoped that through continuous iteration and expansion of the feature set, this app will make a real impact and contribution to the overall wellbeing of smartphone users.(3)\n";
+  String get about_myopiai_4 => "Thoughtfully, crafted by clinicians, graphic artists, user-interface designers and full-stack app developers passionate about digital health, MyopiAI is the first app of MyopiAI Ltd. \n";
+  String get about_myopiai_mark_1 => "Holden BA, Fricke TR, Wilson DA, Jong M, Naidoo KS, Sankaridurg P, et al. Global Prevalence of Myopia and High Myopia and Temporal Trends from 2000 through 2050. Ophthalmology. 2016;123(5):1036-42.\n";
+  String get about_myopiai_mark_2 => "2. He X, Sankaridurg P, Xiong S, Li W, Zhang B, Weng R, Zhu J, Naduvilath T, Resnikoff S, Zou H, Xu X. Shanghai Time Outside to Reduce Myopia trial: design and baseline data. Clinical & experimental ophthalmology. 2019 Mar;47(2):171-8.\n";
+  String get about_myopiai_mark_3 => "The impact of myopia and high myopia: report of the Joint World Health Organization–Brien Holden Vision Institute Global Scientific Meeting on Myopia, University of New South Wales, Sydney, Australia, 16–18 March 2015 \n";
+  String get about_us_copyright => "Copyright © 2019 MyopiAI.All Rights Reserved.";
   String get activity_202020_msg => "Please take a break to look into the distance for 20 seconds at something 20 yards(18 meters) away";
   String get activity_add_btn => "ADD";
   String get activity_bike => "Biking";
@@ -62,15 +70,17 @@ class S implements WidgetsLocalizations {
   String get app_name => "MyopiAI";
   String get ax_warning => "AX value must be less than 180";
   String get cancel => "CANCEL";
+  String get developer_title => "Architect & Developer";
   String get end => "END";
   String get eye_activity_time => "Eye Activity Time";
   String get eye_exercise => "Eye exercise";
   String get eye_exercise_start_summary => "The traditional Chinese eye exercises of acupoints requires approximately 5 minutes to complete. It is effective in relieving eye strain and fatigue. It involves bilateral self-massage at selected acupoints.";
-  String get eye_exercise_start_title => "Eye Exercise I (Acupoint Massage)";
-  String get eye_exercise_step_1 => "1）knead Tianying(Ashi)point.";
+  String get eye_exercise_start_title => "Eye Exercise(Acupoint Massage)";
+  String get eye_exercise_step_1 => "1）knead Tianying(Ashi) point.";
   String get eye_exercise_step_2 => "2）Press and squeeze Jingming(BL1).";
-  String get eye_exercise_step_3 => "3）Press and Knead Sibai(ST2).";
-  String get eye_exercise_step_4 => "4）Press Taiyang(Ex-HN5)and scrape Cuanzhu(BL2), Yuyao(EX-HN4), Sizhukong(TE23), Tongziliao(GB1), Chengqi(ST1).";
+  String get eye_exercise_step_3 => "3）Press and knead Sibai(ST2).";
+  String get eye_exercise_step_4 => "4）Press Taiyang(Ex-HN5) and scrape Cuanzhu(BL2), Yuyao(EX-HN4), Sizhukong(TE23), Tongziliao(GB1), Chengqi(ST1).";
+  String get founder_title => "Founder & Product Owner";
   String get high_des_diagnosis => "    You have high myopia (short-sightedness) in one or both eyes, and need visual correction in the form of eyewear, or contact lenses.\n\n    You are at relatively high risk of myopia-related eye complications. Have your eye health regularly tested (every 2 years) as eyesight and eye health can deteriorate without you noticing and also be affected by other medical conditions before they are diagnosed e.g. diabetes, or more regularly if advised by a healthcare professional.\n\n    Conditions to be aware of:\n\t\t\t\tPosterior Vitreous Detachment\n\t\t\t\tRetinal Detachment\n\t\t\t\tGlaucoma\n\t\t\t\tCataracts\n\n    Go see an eye care professional immediately if you experience any unusual, persistent visual disturbances e.g. floating stars, curtain being ‘drawn across’ visual field etc.";
   String get high_des_references => "    ABDEL-AAL, E.-S., AKHTAR, H., ZAHEER, K. & ALI, R. 2013. Dietary sources of lutein and zeaxanthin carotenoids and their role in eye health. Nutrients, 5, 1169-1185.\n\n    BLEHM, C., VISHNU, S., KHATTAK, A., MITRA, S. & YEE, R. W. 2005. Computer Vision Syndrome: A Review. Survey of Ophthalmology, 50, 253-262.\n\n    RNIB 2018. Myopia and pathological myopia.\n\n    ROBERTS, J. E. 2011. Ultraviolet radiation as a risk factor for cataract and macular degeneration. Eye & contact lens, 37, 246-249.";
   String get high_des_tips => "    Take regular breaks when using the computer or reading: remember the 20-20-20 rule. Look into the distance for 20 seconds at something 20 yards away (~18 meters) every 20 minutes.\n\n    Eat healthily! A balanced diet is good for eye health as it is for general health! Fruit, vegetables and oily fish are a great start.\n\n    Shield your eyes from excessively strong sun – a source of UVA and UVB radiation – with sunglasses. UVA/UVB light is risk factor for developing cataracts.";
@@ -81,6 +91,8 @@ class S implements WidgetsLocalizations {
   String get home_show_more => "SHOW MORE";
   String get home_title => "Home";
   String get left => "LEFT";
+  String get lei_title => "Interaction Designer";
+  String get meng_title => "UI/Visual Designer";
   String get mild_des_diagnosis => "    You have mild myopia (short-sightedness) in one or both eyes, and would benefit from visual correction in the form of eyewear, or contact lenses.\n\n    The good news is you are at low risk of myopia-related eye complications, but remember to have your eyes regularly tested (every 2 years) as eyesight can deteriorate without you noticing and also be affected by other medical conditions before they are diagnosed e.g. diabetes.\n\n    Go see an eye care professional immediately if you experience any unusual, persistent visual disturbances e.g. floating stars, curtain being ‘drawn across’ visual field etc.";
   String get mild_des_references => "    ABDEL-AAL, E.-S., AKHTAR, H., ZAHEER, K. & ALI, R. 2013. Dietary sources of lutein and zeaxanthin carotenoids and their role in eye health. Nutrients, 5, 1169-1185.\n\n    BLEHM, C., VISHNU, S., KHATTAK, A., MITRA, S. & YEE, R. W. 2005. Computer Vision Syndrome: A Review. Survey of Ophthalmology, 50, 253-262.\n\n    ROBERTS, J. E. 2011. Ultraviolet radiation as a risk factor for cataract and macular degeneration. Eye & contact lens, 37, 246-249.";
   String get mild_des_tips => "    Take regular breaks when using the computer or reading: remember the 20-20-20 rule. Look into the distance for 20 seconds at something 20 yards away (~18 meters) every 20 minutes.\n\n    Eat healthily! A balanced diet is good for eye health as it is for general health!  Fruit, vegetables and oily fish are a great start.\n\n    Shield your eyes from excessively strong sun – a source of UVA and UVB radiation – with sunglasses. UVA/UVB light is risk factor for developing cataracts.";
@@ -105,12 +117,13 @@ class S implements WidgetsLocalizations {
   String get right => "RIGHT";
   String get s_continue => "CONTINUE";
   String get settings_202020_msg => "To protect your eyes, after using eyes for 20 minutes, a popup will be shown to suggest you take a break to look into the distance for 20 seconds at something 20 yards(18 meters) away";
+  String get settings_about_myopiai => "About MyopiAI";
   String get settings_about_us => "About us";
   String get settings_feedback => "Feedback";
   String get settings_myopia_level => "Search myopia level";
   String get settings_rate_us => "Rate us";
   String get settings_statistics => "Statistics";
-  String get settings_team_page => "Team homepage";
+  String get settings_team_page => "Our team";
   String get settings_title => "Settings";
   String get settings_update_check => "Check for update";
   String get settings_version => "Version";
@@ -119,6 +132,8 @@ class S implements WidgetsLocalizations {
   String get start => "START";
   String get start_new_activity => "Start a new activity";
   String get stop => "STOP";
+  String get team_page_our_team => "Our team";
+  String get team_page_title => "Our Team";
   String get time_h => "h";
   String get time_min => "min";
   String get time_mins => "mins";

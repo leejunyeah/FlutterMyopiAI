@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_myopia_ai/util/myopia_const.dart';
 
 import '../generated/i18n.dart';
@@ -15,6 +16,10 @@ class DialogContent extends StatefulWidget {
 }
 
 class DialogContentState extends State<DialogContent> {
+
+  static const recordPlugin =
+      const MethodChannel('com.myopia.flutter_myopia_ai/record');
+
   Timer _20Timer;
   int _counterS;
   bool _isRunning;
@@ -212,6 +217,10 @@ class DialogContentState extends State<DialogContent> {
     );
   }
 
+  Future<Null> _playVibrate() async {
+    await recordPlugin.invokeMethod('_playVibrate');
+  }
+
   _handleClose() {
     _counterS = 20;
     _isRunning = false;
@@ -241,12 +250,14 @@ class DialogContentState extends State<DialogContent> {
   _start20Timer() {
     _20Timer = Timer.periodic(new Duration(seconds: 1), (timer) {
       _counterS--;
+      setState(() {});
       if (_counterS <= 0) {
         _counterS = 20;
         _isRunning = false;
         timer.cancel();
+        _playVibrate();
+        _handleClose();
       }
-      setState(() {});
     });
   }
 }

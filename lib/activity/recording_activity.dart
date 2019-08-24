@@ -63,7 +63,7 @@ class _RecordingActivityState extends State<RecordingActivity>
   Color _mainColor;
 
   final TextStyle _counterStyle = const TextStyle(
-    fontSize: 72,
+    fontSize: 70,
     color: Colors.white,
   );
 
@@ -129,13 +129,10 @@ class _RecordingActivityState extends State<RecordingActivity>
       } else if (status == AnimationStatus.dismissed) {
         //动画从 controller.reverse() 反向执行 结束时会回调此方法
         _targetAnimController.forward();
-        print("status is dismissed");
       } else if (status == AnimationStatus.forward) {
-        print("status is forward");
         //执行 controller.forward() 会回调此状态
       } else if (status == AnimationStatus.reverse) {
         //执行 controller.reverse() 会回调此状态
-        print("status is reverse");
       }
     });
   }
@@ -270,7 +267,7 @@ class _RecordingActivityState extends State<RecordingActivity>
                     ),
                   ),
                   SizedBox(
-                    height: 22,
+                    height: 14,
                   ),
                   Expanded(
                     flex: 1,
@@ -375,8 +372,8 @@ class _RecordingActivityState extends State<RecordingActivity>
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
               SizedBox(
-                width: 120,
-                height: 120,
+                width: 126,
+                height: 126,
                 child: FlatButton(
                   color: Color(0xE2F82E47),
                   highlightColor: Color(0xFFF82E47),
@@ -404,8 +401,8 @@ class _RecordingActivityState extends State<RecordingActivity>
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
               SizedBox(
-                width: 120,
-                height: 120,
+                width: 126,
+                height: 126,
                 child: FlatButton(
                   color: COLOR_MAIN_GREEN,
                   highlightColor: Colors.green[200],
@@ -424,8 +421,8 @@ class _RecordingActivityState extends State<RecordingActivity>
                 width: 40,
               ),
               SizedBox(
-                width: 120,
-                height: 120,
+                width: 126,
+                height: 126,
                 child: FlatButton(
                   color: Color(0xE2F82E47),
                   highlightColor: Color(0xFFF82E47),
@@ -505,11 +502,12 @@ class _RecordingActivityState extends State<RecordingActivity>
   }
 
   Future<Null> _playVibrate() async {
-    await recordPlugin.invokeMethod('_playVibrate');
+    await recordPlugin.invokeMethod('playVibrate');
   }
 
   Future<Null> _hasLightSensor() async {
-    _lightSensorValid = await recordPlugin.invokeMethod('hasLightSensor');
+    bool temp = await recordPlugin.invokeMethod('hasLightSensor');
+    _lightSensorValid = temp != null ? temp : false;
     setState(() {});
   }
 

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_myopia_ai/data/activity_item.dart';
 import 'package:flutter_myopia_ai/generated/i18n.dart';
@@ -8,10 +7,6 @@ const Color COLOR_MAIN_GREEN = Color(0xFF13D077);
 const Color COLOR_RESULT_TITLE = Color(0xFF191919);
 const Color COLOR_RESULT_HEADER = Color(0x7F191919);
 const Color COLOR_RESULT_DETAIL = Color(0xFF191919);
-//const Color COLOR_COMPUTER = Color(0xFF21C8D4);
-//const Color COLOR_TV = Color(0xFF4F7CEC);
-//const Color COLOR_PHONE = Color(0xFFF26B82);
-//const Color COLOR_OTHER = Color(0xFFFD9719);
 const Color COLOR_NONE = Color(0xFFEBEBEB);
 
 const Color INDOOR_COLOR_1 = Color(0xFF64CF39);
@@ -48,12 +43,6 @@ const OUTDOOR_COLORS = [
   OUTDOOR_COLOR_6
 ];
 
-const String READING = 'Reading';
-const String COMPUTER = 'Computer';
-const String TV = 'Watching TV';
-const String PHONE = 'Phone';
-const String OTHER = 'Other';
-
 const int MAX_DETAIL_COUNT = 5;
 
 const TextStyle STYLE_RESULT_HEADER = TextStyle(
@@ -74,163 +63,6 @@ const TextStyle STYLE_EDIT_ITEM = TextStyle(
 
 const ShapeBorder CARD_SHAPE = const RoundedRectangleBorder(
     borderRadius: BorderRadius.all(Radius.circular(12.0)));
-
-final Widget icGlasses = new SvgPicture.asset(
-  'assets/ic_glasses.svg',
-);
-final Widget icActivity = new SvgPicture.asset(
-  'assets/ic_activity.svg',
-);
-final Widget icStartActivity = new SvgPicture.asset(
-  'assets/img_start_a_new_activity.svg',
-);
-
-final Widget icEyeExercise = new SvgPicture.asset(
-  'assets/img_eye_exercise.svg',
-);
-
-final Widget icAssignment = new SvgPicture.asset(
-  'assets/ic_assignment.svg',
-);
-
-final Widget icSearchMyLevel = new SvgPicture.asset(
-  'assets/ic_search_myopia_level.svg',
-);
-
-final Widget icStatistic = new SvgPicture.asset(
-  'assets/ic_statistic.svg',
-);
-
-final Widget ic202020 = new SvgPicture.asset(
-  'assets/ic_20_20_20.svg',
-);
-
-final Widget icFeedback = new SvgPicture.asset(
-  'assets/ic_feedback.svg',
-);
-
-final Widget icAboutUs = new SvgPicture.asset(
-  'assets/ic_about_us.svg',
-);
-
-final Widget icRateUs = new SvgPicture.asset(
-  'assets/ic_rate_us.svg',
-);
-
-final Widget icReading = new SvgPicture.asset(
-  'assets/ic_reading.svg',
-);
-
-final Widget icComputer = new SvgPicture.asset(
-  'assets/ic_computer.svg',
-);
-
-final Widget icTv = new SvgPicture.asset(
-  'assets/ic_watching_tv.svg',
-);
-
-final Widget icPhone = new SvgPicture.asset(
-  'assets/ic_phone.svg',
-);
-
-final Widget icOthers = new SvgPicture.asset(
-  'assets/ic_others.svg',
-);
-
-final Widget icBike = new SvgPicture.asset(
-  'assets/ic_bike.svg',
-);
-
-final Widget icHike = new SvgPicture.asset(
-  'assets/ic_hike.svg',
-);
-
-final Widget icGame = new SvgPicture.asset(
-  'assets/ic_game.svg',
-);
-
-final Widget icRun = new SvgPicture.asset(
-  'assets/ic_run.svg',
-);
-
-final Widget icSports = new SvgPicture.asset(
-  'assets/ic_sports.svg',
-);
-
-final Widget icSwim = new SvgPicture.asset(
-  'assets/ic_swim.svg',
-);
-
-final Widget icOthersOutdoor = new SvgPicture.asset(
-  'assets/ic_others_outdoor.svg',
-);
-
-final Widget icApp = new SvgPicture.asset(
-  'assets/app_icon.svg',
-);
-final Widget icLogo = new SvgPicture.asset(
-  'assets/ic_logo.svg',
-);
-
-final Widget bgReading = new SvgPicture.asset(
-  'assets/background_reading.svg',
-);
-final Widget bgComputer = new SvgPicture.asset(
-  'assets/background_computer.svg',
-);
-final Widget bgGame = new SvgPicture.asset(
-  'assets/background_game.svg',
-);
-final Widget bgPhone = new SvgPicture.asset(
-  'assets/background_phone.svg',
-);
-final Widget bgTv = new SvgPicture.asset(
-  'assets/background_watching_tv.svg',
-);
-final Widget bgOthers = new SvgPicture.asset(
-  'assets/background_others.svg',
-);
-final Widget bgSwim = new SvgPicture.asset(
-  'assets/background_swim.svg',
-);
-final Widget bgSports = new SvgPicture.asset(
-  'assets/background_sports.svg',
-);
-final Widget bgRun = new SvgPicture.asset(
-  'assets/background_run.svg',
-);
-final Widget bgBike = new SvgPicture.asset(
-  'assets/background_bike.svg',
-);
-final Widget bgHike = new SvgPicture.asset(
-  'assets/background_hike.svg',
-);
-final Widget bgOthersOutdoor = new SvgPicture.asset(
-  'assets/background_others_outdoor.svg',
-);
-
-final Widget eyeFace1 = new SvgPicture.asset(
-  'assets/eye_exercise_face_1.svg',
-);
-final Widget eyeFace2 = new SvgPicture.asset(
-  'assets/eye_exercise_face_2.svg',
-);
-final Widget eyeExercise1 = new SvgPicture.asset(
-  'assets/eye_exercise_1.svg',
-  height: 330,
-);
-final Widget eyeExercise2 = new SvgPicture.asset(
-  'assets/eye_exercise_2.svg',
-  height: 330,
-);
-final Widget eyeExercise3 = new SvgPicture.asset(
-  'assets/eye_exercise_3.svg',
-  height: 330,
-);
-final Widget eyeExercise4 = new SvgPicture.asset(
-  'assets/eye_exercise_4.svg',
-  height: 330,
-);
 
 Color getActivityColor(int type, {int index = -1}) {
   if (type == ActivityItem.TYPE_INDOOR) {
@@ -255,31 +87,55 @@ Color getActivityColor(int type, {int index = -1}) {
 Widget getActivityIcon(int type) {
   if (type & ActivityItem.TYPE_INDOOR != 0) {
     if (type & ActivityItem.TYPE_READING != 0) {
-      return icReading;
+      return SvgPicture.asset(
+        'assets/ic_reading.svg',
+      );
     } else if (type & ActivityItem.TYPE_COMPUTER != 0) {
-      return icComputer;
+      return SvgPicture.asset(
+        'assets/ic_computer.svg',
+      );
     } else if (type & ActivityItem.TYPE_TV != 0) {
-      return icTv;
+      return SvgPicture.asset(
+        'assets/ic_watching_tv.svg',
+      );
     } else if (type & ActivityItem.TYPE_PHONE != 0) {
-      return icPhone;
+      return SvgPicture.asset(
+        'assets/ic_phone.svg',
+      );
     } else if (type & ActivityItem.TYPE_GAMES != 0) {
-      return icGame;
+      return SvgPicture.asset(
+        'assets/ic_game.svg',
+      );
     } else {
-      return icOthers;
+      return SvgPicture.asset(
+        'assets/ic_others.svg',
+      );
     }
   } else {
     if (type & ActivityItem.TYPE_SPORTS != 0) {
-      return icSports;
+      return SvgPicture.asset(
+        'assets/ic_sports.svg',
+      );
     } else if (type & ActivityItem.TYPE_RUN != 0) {
-      return icRun;
+      return SvgPicture.asset(
+        'assets/ic_run.svg',
+      );
     } else if (type & ActivityItem.TYPE_HIKE != 0) {
-      return icHike;
+      return SvgPicture.asset(
+        'assets/ic_hike.svg',
+      );
     } else if (type & ActivityItem.TYPE_BIKE != 0) {
-      return icBike;
+      return SvgPicture.asset(
+        'assets/ic_bike.svg',
+      );
     } else if (type & ActivityItem.TYPE_SWIM != 0) {
-      return icSwim;
+      return SvgPicture.asset(
+        'assets/ic_swim.svg',
+      );
     } else {
-      return icOthersOutdoor;
+      return SvgPicture.asset(
+        'assets/ic_others_outdoor.svg',
+      );
     }
   }
 }
@@ -287,31 +143,55 @@ Widget getActivityIcon(int type) {
 Widget getBackground(int type) {
   if (type & ActivityItem.TYPE_INDOOR != 0) {
     if (type & ActivityItem.TYPE_READING != 0) {
-      return bgReading;
+      return SvgPicture.asset(
+        'assets/background_reading.svg',
+      );
     } else if (type & ActivityItem.TYPE_COMPUTER != 0) {
-      return bgComputer;
+      return SvgPicture.asset(
+        'assets/background_computer.svg',
+      );
     } else if (type & ActivityItem.TYPE_TV != 0) {
-      return bgTv;
+      return SvgPicture.asset(
+        'assets/background_watching_tv.svg',
+      );
     } else if (type & ActivityItem.TYPE_PHONE != 0) {
-      return bgPhone;
+      return SvgPicture.asset(
+        'assets/background_phone.svg',
+      );
     } else if (type & ActivityItem.TYPE_GAMES != 0) {
-      return bgGame;
+      return SvgPicture.asset(
+        'assets/background_game.svg',
+      );
     } else {
-      return bgOthers;
+      return SvgPicture.asset(
+        'assets/background_others.svg',
+      );
     }
   } else {
     if (type & ActivityItem.TYPE_SPORTS != 0) {
-      return bgSports;
+      return SvgPicture.asset(
+        'assets/background_sports.svg',
+      );
     } else if (type & ActivityItem.TYPE_HIKE != 0) {
-      return bgHike;
+      return SvgPicture.asset(
+        'assets/background_hike.svg',
+      );
     } else if (type & ActivityItem.TYPE_BIKE != 0) {
-      return bgBike;
+      return SvgPicture.asset(
+        'assets/background_bike.svg',
+      );
     } else if (type & ActivityItem.TYPE_RUN != 0) {
-      return bgRun;
+      return SvgPicture.asset(
+        'assets/background_run.svg',
+      );
     } else if (type & ActivityItem.TYPE_SWIM != 0) {
-      return bgSwim;
+      return SvgPicture.asset(
+        'assets/background_swim.svg',
+      );
     } else {
-      return bgOthersOutdoor;
+      return SvgPicture.asset(
+        'assets/background_others_outdoor.svg',
+      );
     }
   }
 }

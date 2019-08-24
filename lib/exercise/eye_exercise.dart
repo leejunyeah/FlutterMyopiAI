@@ -8,7 +8,7 @@ import 'package:flutter_myopia_ai/exercise/my_slide_transition.dart';
 import 'package:flutter_myopia_ai/generated/i18n.dart';
 import 'package:flutter_myopia_ai/util/myopia_const.dart';
 import 'package:flutter_seekbar/flutter_seekbar.dart';
-import 'package:intro_slider/slide_object.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class EyeExercise extends StatefulWidget {
   @override
@@ -23,7 +23,6 @@ class _EyeExerciseState extends State<EyeExercise> {
   static const int _totalStep = 4;
   static const String _assetsLocalFilePath = "eye_exercise_music.mp3";
 
-  List<Slide> slides = new List();
   List<String> _titleList;
   List<Widget> _imageList;
   int _playingTime;
@@ -56,7 +55,6 @@ class _EyeExerciseState extends State<EyeExercise> {
     _audioCache = new AudioCache();
     _audioPlayer = new AudioPlayer();
   }
-
 
   Future _playLocal() async {
     File file = await _audioCache.load(_assetsLocalFilePath);
@@ -232,7 +230,24 @@ class _EyeExerciseState extends State<EyeExercise> {
       S.of(context).eye_exercise_step_3,
       S.of(context).eye_exercise_step_4,
     ];
-    _imageList = [eyeExercise1, eyeExercise2, eyeExercise3, eyeExercise4];
+    _imageList = [
+      SvgPicture.asset(
+        'assets/eye_exercise_1.svg',
+        height: 330,
+      ),
+      SvgPicture.asset(
+        'assets/eye_exercise_2.svg',
+        height: 330,
+      ),
+      SvgPicture.asset(
+        'assets/eye_exercise_3.svg',
+        height: 330,
+      ),
+      SvgPicture.asset(
+        'assets/eye_exercise_4.svg',
+        height: 330,
+      )
+    ];
   }
 
   _playTimer() {

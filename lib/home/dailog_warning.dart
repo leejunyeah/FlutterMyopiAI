@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_myopia_ai/generated/i18n.dart';
 import 'package:flutter_myopia_ai/util/myopia_const.dart';
 
 class DialogWarning extends StatefulWidget {
@@ -22,7 +23,7 @@ class _DialogWarning extends State<DialogWarning> {
       child: Center(
         child: SizedBox(
           width: 280,
-          height: 170,
+          height: 190,
           child: Card(
             elevation: 12,
             shape: CARD_SHAPE,
@@ -34,7 +35,7 @@ class _DialogWarning extends State<DialogWarning> {
                     width: double.infinity,
                     alignment: Alignment.topLeft,
                     child: Text(
-                      'Warning!',
+                      S.of(context).warning_title,
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -69,9 +70,9 @@ class _DialogWarning extends State<DialogWarning> {
                           child: FlatButton(
                             onPressed: () => _handleConfirm(),
                             child: Text(
-                              'OK',
+                              S.of(context).ok,
                               style:
-                              TextStyle(color: Color(0xE2F82E47), fontSize: 18),
+                              TextStyle(color: COLOR_MAIN_GREEN, fontSize: 18),
                             ),
                           ),
                         ),

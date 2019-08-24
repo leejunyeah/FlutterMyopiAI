@@ -11,11 +11,11 @@ import 'package:flutter_myopia_ai/home/home_total_progress.dart';
 import 'package:flutter_myopia_ai/home/result_myopia.dart';
 import 'package:flutter_myopia_ai/util/myopia_const.dart';
 import 'package:flutter_myopia_ai/activity/start_activity.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../generated/i18n.dart';
 
 class Home extends StatefulWidget {
-
   final TabController tabController;
 
   Home({this.tabController});
@@ -56,42 +56,42 @@ class HomeState extends State<Home> {
           new Padding(
             padding: const EdgeInsets.all(16.0),
             child: new RaisedButton(
-              elevation: 4,
-              shape: CARD_SHAPE,
-              color: Colors.white,
-              padding: const EdgeInsets.only(
-                  left: 20, top: 20, right: 20, bottom: 20),
-              child: new Column(
-                children: <Widget>[
-                  new Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      new Text(
-                        //'Eye Activity Time',
-                        S.of(context).eye_activity_time,
-                        textAlign: TextAlign.start,
-                        style: new TextStyle(
-                          color: COLOR_RESULT_DETAIL,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18.0,
+                elevation: 4,
+                shape: CARD_SHAPE,
+                color: Colors.white,
+                padding: const EdgeInsets.only(
+                    left: 20, top: 20, right: 20, bottom: 20),
+                child: new Column(
+                  children: <Widget>[
+                    new Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        new Text(
+                          //'Eye Activity Time',
+                          S.of(context).eye_activity_time,
+                          textAlign: TextAlign.start,
+                          style: new TextStyle(
+                            color: COLOR_RESULT_DETAIL,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18.0,
+                          ),
                         ),
-                      ),
-                      _buildTotalHour(),
-                    ],
-                  ),
-                  HomeTotalProgress(
-                    dataList: _dataList,
-                    indoorColorList: _indoorColorList,
-                    outdoorColorList: _outdoorColorList,
-                    customList: _customList,
-                  ),
-                ],
-              ),
-              onPressed: () {
-                if (widget.tabController != null) {
-                  widget.tabController.animateTo(1);
+                        _buildTotalHour(),
+                      ],
+                    ),
+                    HomeTotalProgress(
+                      dataList: _dataList,
+                      indoorColorList: _indoorColorList,
+                      outdoorColorList: _outdoorColorList,
+                      customList: _customList,
+                    ),
+                  ],
+                ),
+                onPressed: () {
+                  if (widget.tabController != null) {
+                    widget.tabController.animateTo(1);
+                  }
                 }
-              }
 //            () => Navigator.push(
 //                context,
 //                new MaterialPageRoute(
@@ -99,7 +99,7 @@ class HomeState extends State<Home> {
 //                          itemType: ActivityItem.TYPE_NONE,
 //                        )),
 //              ),
-            ),
+                ),
           ),
           new Padding(
             padding: const EdgeInsets.only(left: 16.0, right: 16, bottom: 16),
@@ -116,7 +116,9 @@ class HomeState extends State<Home> {
                     children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.only(right: 16.0),
-                        child: icGlasses,
+                        child: SvgPicture.asset(
+                          'assets/ic_glasses.svg',
+                        ),
                       ),
                       new Text(
                         _myopiaResult,
@@ -151,7 +153,7 @@ class HomeState extends State<Home> {
             ),
           ),
           Container(
-            padding: const EdgeInsets.only(left: 16.0, right: 16, bottom: 16),
+            padding: EdgeInsets.only(left: 16, right: 16),
             alignment: Alignment.center,
             child: new Row(
               children: <Widget>[
@@ -159,21 +161,33 @@ class HomeState extends State<Home> {
                   flex: 1,
                   child: Container(
                     height: 146,
-                    padding: EdgeInsets.only(right: 5),
                     child: new RaisedButton(
                       padding: EdgeInsets.all(0),
                       elevation: 4,
                       shape: CARD_SHAPE,
-                      color: Colors.transparent,
-                      child: ConstrainedBox(
-                        constraints: new BoxConstraints.expand(),
-                        child: Stack(
-                          children: <Widget>[
-                            icStartActivity,
-                            Container(
-                              padding:
-                                  EdgeInsets.only(top: 50, left: 16, right: 16),
-                              alignment: Alignment.topLeft,
+                      color: COLOR_MAIN_GREEN,
+                      onPressed: () => _gotoStartActivity(),
+                      child: Stack(
+                        children: <Widget>[
+                          Positioned(
+                            top: 16,
+                            left: 16,
+                            child: SvgPicture.asset(
+                              'assets/ic_home_left_top_eye.svg',
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: -1,
+                            child: SvgPicture.asset(
+                              'assets/ic_home_right_bottom_people.svg',
+                            ),
+                          ),
+                          Positioned(
+                            left: 16,
+                            right: 20,
+                            bottom: 25,
+                            child: Container(
                               child: Text(
                                 //'Start a new Activity',
                                 S.of(context).start_new_activity,
@@ -185,34 +199,52 @@ class HomeState extends State<Home> {
                                 ),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      onPressed: () => _gotoStartActivity(),
                     ),
                   ),
+                ),
+                SizedBox(
+                  width: 10,
                 ),
                 Expanded(
                   flex: 1,
                   child: Container(
                     height: 146,
-                    padding: EdgeInsets.only(right: 5),
                     child: new RaisedButton(
                       padding: EdgeInsets.all(0),
                       elevation: 4,
                       shape: CARD_SHAPE,
-                      color: Colors.transparent,
-                      child: ConstrainedBox(
-                        constraints: new BoxConstraints.expand(),
-                        child: Stack(
-                          children: <Widget>[
-                            icEyeExercise,
-                            Container(
-                              padding:
-                                  EdgeInsets.only(top: 50, left: 16, right: 16),
-                              alignment: Alignment.topLeft,
+                      color: COLOR_MAIN_GREEN,
+                      onPressed: () => Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                            builder: (context) => new StartEyeExercise()),
+                      ),
+                      child: Stack(
+                        children: <Widget>[
+                          Positioned(
+                            top: 16,
+                            left: 16,
+                            child: SvgPicture.asset(
+                              'assets/ic_home_left_top_smile.svg',
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: -1,
+                            child: SvgPicture.asset(
+                              'assets/ic_home_right_bottom_exercise_people.svg',
+                            ),
+                          ),
+                          Positioned(
+                            left: 16,
+                            right: 20,
+                            bottom: 25,
+                            child: Container(
                               child: Text(
-                                //'Eye exercise',
+                                //'Start a new Activity',
                                 S.of(context).eye_exercise,
                                 textAlign: TextAlign.start,
                                 style: new TextStyle(
@@ -222,17 +254,12 @@ class HomeState extends State<Home> {
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                      onPressed: () => Navigator.push(
-                        context,
-                        new MaterialPageRoute(
-                            builder: (context) => new StartEyeExercise()),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -343,7 +370,7 @@ class HomeState extends State<Home> {
     for (ActivityItem item in _activityList) {
       if (item.actual < 60) continue;
       SortActivityItem sortActivityItem = _dataList.firstWhere(
-              (element) => (element.type == item.type &&
+          (element) => (element.type == item.type &&
               element.customType == item.customType),
           orElse: () => null);
       if (sortActivityItem == null) {
@@ -358,8 +385,7 @@ class HomeState extends State<Home> {
         sortActivityItem.totalTime += item.actual;
       }
     }
-    _dataList
-        .sort((left, right) => right.totalTime.compareTo(left.totalTime));
+    _dataList.sort((left, right) => right.totalTime.compareTo(left.totalTime));
 
     _indoorColorList = [];
     _outdoorColorList = [];
@@ -368,14 +394,14 @@ class HomeState extends State<Home> {
     _dataList.forEach((element) {
       if (element.type & ActivityItem.TYPE_INDOOR != 0) {
         if (indoorIndex <= MAX_DETAIL_COUNT) {
-          _indoorColorList.add(
-              getActivityColor(element.type, index: indoorIndex));
+          _indoorColorList
+              .add(getActivityColor(element.type, index: indoorIndex));
           indoorIndex++;
         }
       } else {
         if (outdoorIndex <= MAX_DETAIL_COUNT) {
-          _outdoorColorList.add(
-              getActivityColor(element.type, index: outdoorIndex));
+          _outdoorColorList
+              .add(getActivityColor(element.type, index: outdoorIndex));
           outdoorIndex++;
         }
       }

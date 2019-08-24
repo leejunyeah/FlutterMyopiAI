@@ -9,8 +9,10 @@ import 'package:flutter_myopia_ai/home/result_myopia.dart';
 import 'package:flutter_myopia_ai/settings/about_us.dart';
 import 'package:flutter_myopia_ai/settings/dialog_content_20_intro.dart';
 import 'package:flutter_myopia_ai/util/myopia_const.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:package_info/package_info.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:io';
 
 class Settings extends StatefulWidget {
   @override
@@ -42,22 +44,24 @@ class SettingsState extends State<Settings> {
   }
 
   Widget _buildSettingsList() {
-    return ListView(
-      children: <Widget>[
-        _myVisionStatus(),
-        _buildDivider(),
-        _myopiaLevel(),
-        _buildDivider(),
-        _statistic(),
-        _buildDivider(),
-        _202020(),
-        _buildDivider(),
-        _feedback(),
-        _buildDivider(),
-        _about(),
-        _buildDivider(),
-        _rate(),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          _myVisionStatus(),
+          _buildDivider(),
+          _myopiaLevel(),
+          _buildDivider(),
+          _statistic(),
+          _buildDivider(),
+          _202020(),
+          _buildDivider(),
+          _feedback(),
+          _buildDivider(),
+          _about(),
+          _buildDivider(),
+          _rate(),
+        ],
+      ),
     );
   }
 
@@ -68,7 +72,9 @@ class SettingsState extends State<Settings> {
         height: 68,
         child: Row(
           children: <Widget>[
-            icAssignment,
+            SvgPicture.asset(
+              'assets/ic_assignment.svg',
+            ),
             SizedBox(
               width: 16,
             ),
@@ -87,7 +93,9 @@ class SettingsState extends State<Settings> {
         height: 68,
         child: Row(
           children: <Widget>[
-            icSearchMyLevel,
+            SvgPicture.asset(
+              'assets/ic_search_myopia_level.svg',
+            ),
             SizedBox(
               width: 16,
             ),
@@ -109,7 +117,9 @@ class SettingsState extends State<Settings> {
         height: 68,
         child: Row(
           children: <Widget>[
-            icStatistic,
+            SvgPicture.asset(
+              'assets/ic_statistic.svg',
+            ),
             SizedBox(
               width: 16,
             ),
@@ -134,7 +144,9 @@ class SettingsState extends State<Settings> {
       height: 68,
       child: Row(
         children: <Widget>[
-          ic202020,
+          SvgPicture.asset(
+            'assets/ic_20_20_20.svg',
+          ),
           SizedBox(
             width: 16,
           ),
@@ -190,7 +202,9 @@ class SettingsState extends State<Settings> {
         height: 68,
         child: Row(
           children: <Widget>[
-            icFeedback,
+            SvgPicture.asset(
+              'assets/ic_feedback.svg',
+            ),
             SizedBox(
               width: 16,
             ),
@@ -198,9 +212,7 @@ class SettingsState extends State<Settings> {
           ],
         ),
       ),
-      onTap: () {
-        _handleFeedback();
-      },
+      onTap: _handleFeedback,
     );
   }
 
@@ -211,7 +223,9 @@ class SettingsState extends State<Settings> {
         height: 68,
         child: Row(
           children: <Widget>[
-            icAboutUs,
+            SvgPicture.asset(
+              'assets/ic_about_us.svg',
+            ),
             SizedBox(
               width: 16,
             ),
@@ -233,7 +247,9 @@ class SettingsState extends State<Settings> {
         height: 68,
         child: Row(
           children: <Widget>[
-            icRateUs,
+            SvgPicture.asset(
+              'assets/ic_rate_us.svg',
+            ),
             SizedBox(
               width: 16,
             ),
@@ -297,11 +313,15 @@ class SettingsState extends State<Settings> {
   }
 
   _handleFeedback() async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    String version = packageInfo.version;
-    String mail =
-        'mailto:myopiai.tech@gmail.com?subject=[Version: $version]MyopiAI Feedback';
-    launch(mail);
+    if (Platform.isIOS) {
+      await settingsPlugin.invokeMethod('feedback');
+    } else {
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      String version = packageInfo.version;
+      String mail =
+          'mailto:myopiai.tech@gmail.com?subject=[Version: $version]MyopiAI Feedback';
+      launch(mail);
+    }
   }
 
   Future<Null> _rateUs() async {
