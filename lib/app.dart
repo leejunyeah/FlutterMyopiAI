@@ -9,6 +9,7 @@ import 'generated/i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 class MyopiaAi extends StatefulWidget {
+
   @override
   MyopiaAiState createState() => new MyopiaAiState();
 }
@@ -35,6 +36,10 @@ class MyopiaAiState extends State<MyopiaAi> {
         GlobalWidgetsLocalizations.delegate,
         S.delegate,
       ],
+      localeResolutionCallback: (deviceLocale, supportedLocales) {
+        GlobalData.getInstance().cacheLocale(deviceLocale.languageCode);
+        return null;
+      },
       supportedLocales: S.delegate.supportedLocales,
       home: new Scaffold(
         body: glFirstStart ? WelcomePage() : MainPage(),

@@ -185,8 +185,8 @@ class HomeState extends State<Home> {
                           ),
                           Positioned(
                             left: 16,
+                            top: 50,
                             right: 20,
-                            bottom: 25,
                             child: Container(
                               child: Text(
                                 //'Start a new Activity',
@@ -240,8 +240,8 @@ class HomeState extends State<Home> {
                           ),
                           Positioned(
                             left: 16,
+                            top: 50,
                             right: 20,
-                            bottom: 25,
                             child: Container(
                               child: Text(
                                 //'Start a new Activity',

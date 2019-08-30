@@ -22,6 +22,8 @@ const KEY_CREATE_TIME = 'key_create_time';
 const KEY_202020 = 'key_202020';
 const KEY_FIRST_START = 'key_first_start';
 
+const KEY_CURRENT_LOCALE = 'key_current_locale';
+
 const LEVEL_NONE = 0;
 const LEVEL_NORMAL = 1;
 const LEVEL_MILD = 2;
@@ -50,6 +52,8 @@ bool gl202020 = true;
 
 bool glFirstStart = true;
 
+bool _isChinese = false;
+
 class GlobalData {
   factory GlobalData.getInstance() => _sharedInstance();
 
@@ -65,6 +69,17 @@ class GlobalData {
   void cacheCreateTime() {
     DateTime now = new DateTime.now();
     glCreateTime = now.toString();
+  }
+
+  void cacheLocale(String languageCode) {
+    SpUtil.putString(KEY_CURRENT_LOCALE, languageCode);
+  }
+
+  bool isLocaleChinese() {
+    String languageCode = SpUtil.getString(KEY_CURRENT_LOCALE);
+    if (languageCode == null || languageCode.length == 0) return false;
+    _isChinese = languageCode.toLowerCase().startsWith('zh');
+    return _isChinese;
   }
 
   void cacheFinalResult() {

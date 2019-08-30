@@ -53,6 +53,7 @@ class _RecordingActivityState extends State<RecordingActivity>
   bool _isLightWarningShowing = false;
   bool _isLightRemind = true;
   bool _timesUpWarned = false;
+  bool _isIndoor = true;
 
   String _targetString = "";
   String _divider = ":";
@@ -90,6 +91,7 @@ class _RecordingActivityState extends State<RecordingActivity>
   void initState() {
     _show202020Counter = 1;
     _mainColor = getActivityColor(widget.activityItem.type);
+    _isIndoor = widget.activityItem.type & ActivityItem.TYPE_INDOOR != 0;
     lightList.add(0);
     _seriesList = _createLightData();
     _targetString = _parseTargetTimeToString();
@@ -264,6 +266,7 @@ class _RecordingActivityState extends State<RecordingActivity>
                     offstage: !_lightSensorValid,
                     child: LightConditionWidget(
                       seriesList: _seriesList,
+                      conditionDefaultChecked: _isIndoor,
                     ),
                   ),
                   SizedBox(

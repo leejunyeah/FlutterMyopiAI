@@ -9,7 +9,8 @@ import '../generated/i18n.dart';
 
 class LightConditionWidget extends StatefulWidget {
   final List<charts.Series<LightConditionChart, int>> seriesList;
-  LightConditionWidget({this.seriesList});
+  final bool conditionDefaultChecked;
+  LightConditionWidget({this.seriesList, this.conditionDefaultChecked = true});
 
   @override
   _LightConditionWidgetState createState() => new _LightConditionWidgetState();
@@ -27,7 +28,8 @@ class _LightConditionWidgetState extends State<LightConditionWidget> {
 
   @override
   void initState() {
-    // TODO: implement initState
+    _isConditionChecked = widget.conditionDefaultChecked;
+    _changeCanNotifyLight(_isConditionChecked);
     super.initState();
   }
 

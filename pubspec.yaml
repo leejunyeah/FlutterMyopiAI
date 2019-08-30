@@ -145,6 +145,7 @@ flutter:
     - images/top_man_pic.jpeg
     - images/developer_pic.jpeg
     - assets/eye_exercise_music.mp3
+    - assets/eye_exercise_music_en.mp3
     - assets/light_warning.mp3
     - assets/20_warning.mp3
     - assets/target_times_up.mp3

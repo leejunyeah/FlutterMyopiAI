@@ -4,11 +4,14 @@ import 'dart:io';
 import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_myopia_ai/data/gl_data.dart';
+import 'package:flutter_myopia_ai/exercise/dailog_exit_exercise.dart';
 import 'package:flutter_myopia_ai/exercise/my_slide_transition.dart';
 import 'package:flutter_myopia_ai/generated/i18n.dart';
 import 'package:flutter_myopia_ai/util/myopia_const.dart';
 import 'package:flutter_seekbar/flutter_seekbar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class EyeExercise extends StatefulWidget {
   @override
@@ -16,12 +19,23 @@ class EyeExercise extends StatefulWidget {
 }
 
 class _EyeExerciseState extends State<EyeExercise> {
-  static const int _totalTime = 334;
-  static const int _stepTime1 = 105;
-  static const int _stepTime2 = 172;
-  static const int _stepTime3 = 244;
+  static const int _totalTimeZh = 334;
+  static const int _stepTime1Zh = 105;
+  static const int _stepTime2Zh = 172;
+  static const int _stepTime3Zh = 244;
+  static const int _totalTimeEn = 249;
+  static const int _stepTime1En = 81;
+  static const int _stepTime2En = 135;
+  static const int _stepTime3En = 190;
   static const int _totalStep = 4;
-  static const String _assetsLocalFilePath = "eye_exercise_music.mp3";
+  static const String _assetsLocalFilePathZh = "eye_exercise_music.mp3";
+  static const String _assetsLocalFilePathEn = "eye_exercise_music_en.mp3";
+
+  int _totalTime = _totalTimeEn;
+  int _stepTime1 = _stepTime1En;
+  int _stepTime2 = _stepTime2En;
+  int _stepTime3 = _stepTime3En;
+  String _assetsLocalFilePath = _assetsLocalFilePathEn;
 
   List<String> _titleList;
   List<Widget> _imageList;
@@ -36,7 +50,7 @@ class _EyeExerciseState extends State<EyeExercise> {
   AudioCache _audioCache;
   AudioPlayer _audioPlayer;
 
-  bool isMuted = false;
+  bool _isChinese = false;
 
   @override
   void initState() {
@@ -46,6 +60,20 @@ class _EyeExerciseState extends State<EyeExercise> {
     _actionIcon = Icons.play_arrow;
     _step = 0;
     _playingTime = 0;
+    _isChinese = GlobalData.getInstance().isLocaleChinese();
+    if (_isChinese) {
+      _totalTime = _totalTimeZh;
+      _stepTime1 = _stepTime1Zh;
+      _stepTime2 = _stepTime2Zh;
+      _stepTime3 = _stepTime3Zh;
+      _assetsLocalFilePath = _assetsLocalFilePathZh;
+    } else {
+      _totalTime = _totalTimeEn;
+      _stepTime1 = _stepTime1En;
+      _stepTime2 = _stepTime2En;
+      _stepTime3 = _stepTime3En;
+      _assetsLocalFilePath = _assetsLocalFilePathEn;
+    }
     _initAudioPlayer();
     _initDelayStartTimer();
     super.initState();
@@ -83,48 +111,132 @@ class _EyeExerciseState extends State<EyeExercise> {
   @override
   Widget build(BuildContext context) {
     _buildTitleAndImageList();
-    return new Scaffold(
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
         appBar: new AppBar(
           title: new Text(S.of(context).eye_exercise),
           backgroundColor: COLOR_MAIN_GREEN,
         ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            _buildSlideView(),
-            SizedBox(
-              height: 40,
+        body: _buildContent(),
+      ),
+    );
+  }
+
+  Future<bool> _onWillPop() async {
+    if (_playingTime >= _totalTime) {
+      return Future.value(true);
+    } else {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return DialogExitExercise(
+            onCancel: () => {},
+            onConfirm: () => _onConfirm(context),
+          );
+        },
+      );
+      return Future.value(false);
+    }
+  }
+
+  _onConfirm(BuildContext bContext) {
+    Navigator.of(this.context).pop();
+  }
+
+  Widget _buildContent() {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          _buildSlideView(),
+          SizedBox(
+            height: 40,
+          ),
+          Container(
+            padding: EdgeInsets.only(left: 30, right: 30),
+            child: _buildProgress(),
+          ),
+          SizedBox(
+            height: 9,
+          ),
+          Container(
+            padding: EdgeInsets.only(left: 30, right: 30),
+            child: _buildTime(),
+          ),
+          SizedBox(
+            height: 8,
+          ),
+          Container(
+            child: InkWell(
+              child: _buildPlayButton(),
+              onTap: () {
+                if (!_playing) {
+                  _startTimer();
+                } else {
+                  _pauseTimer();
+                }
+                _actionIcon = _playing ? Icons.pause : Icons.play_arrow;
+              },
             ),
-            Container(
-              padding: EdgeInsets.only(left: 30, right: 30),
-              child: _buildProgress(),
+          ),
+          Offstage(
+            offstage: _isChinese,
+            child: SizedBox(
+              height: 20,
             ),
-            SizedBox(
-              height: 9,
+          ),
+          Offstage(
+            offstage: _isChinese,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  S.of(context).eye_exercise_music_by,
+                  style: TextStyle(
+                    color: Color(0x7F999999),
+                    fontSize: 12,
+                  ),
+                ),
+                InkWell(
+                  child: Text(
+                    ' Svyat Ilin ',
+                    style: TextStyle(
+                      color: Color(0x7F2686DB),
+                      fontSize: 12,
+                    ),
+                  ),
+                  onTap: () {
+                    _onPressSvyat();
+                  },
+                ),
+                Text(
+                  S.of(context).eye_exercise_from,
+                  style: TextStyle(
+                    color: Color(0x7F999999),
+                    fontSize: 12,
+                  ),
+                ),
+                InkWell(
+                  child: Text(
+                    ' Fugue',
+                    style: TextStyle(
+                      color: Color(0x7F2686DB),
+                      fontSize: 12,
+                    ),
+                  ),
+                  onTap: () {
+                    _onPressFugue();
+                  },
+                ),
+              ],
             ),
-            Container(
-              padding: EdgeInsets.only(left: 30, right: 30),
-              child: _buildTime(),
-            ),
-            SizedBox(
-              height: 8,
-            ),
-            Container(
-              child: InkWell(
-                child: _buildPlayButton(),
-                onTap: () {
-                  if (!_playing) {
-                    _startTimer();
-                  } else {
-                    _pauseTimer();
-                  }
-                  _actionIcon = _playing ? Icons.pause : Icons.play_arrow;
-                },
-              ),
-            ),
-          ],
-        ));
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildProgress() {
@@ -307,5 +419,23 @@ class _EyeExerciseState extends State<EyeExercise> {
     setState(() {});
     _playPause();
     if (_timer != null) _timer.cancel();
+  }
+
+  _onPressSvyat() async {
+    const url = 'https://icons8.com/music/author/svyat-ilin';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  _onPressFugue() async {
+    const url = 'https://icons8.com/music';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }
