@@ -1,4 +1,4 @@
-# flutter_myopia_ai
+# FlutterMyopiAI
 
 A new Flutter application.
 
